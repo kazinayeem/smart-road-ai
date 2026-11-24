@@ -1,0 +1,15 @@
+{
+  "name": "smartpothole-full-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SmartPothole Full Platform — Edge AI, OpenStreetMap, Realtime GIS, and Live Companion Mode",
+  "scripts": {
+    "seed": "npm --prefix scripts run seed:emulator",
+    "seed:prod": "npm --prefix scripts run seed:prod",
+    "seed:emulator": "npm --prefix scripts run seed:emulator",
+    "seed:all": "npm --prefix scripts run seed:emulator && npm --prefix scripts run seed:prod",
+    "web:dev": "npm --prefix web-dashboard run dev",
+    "web:build": "npm --prefix web-dashboard run build",
+    "web:start": "npm --prefix web-dashboard run start"
+  }
+}

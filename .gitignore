@@ -1,31 +1,34 @@
-# OS
-.DS_Store
-Thumbs.db
-
-# Gradle and Android build outputs
-.gradle/
-**/android-app/.gradle/
-**/build/
-**/android-app/app/build/
-.idea/
-*.iml
-local.properties
-.cxx/
-
-# Node & Next.js
+# Dependencies
 node_modules/
-**/node_modules/
-**/.next/
-**/out/
+
+# Next.js build output / caches
+web-dashboard/.next/
+web-dashboard/.next-emu/
+web-dashboard/.next-demo/
+web-dashboard/out/
 *.tsbuildinfo
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+
+# Android / Gradle
+android-app/.gradle/
+android-app/build/
+android-app/app/build/
+android-app/local.properties
+android-app/.idea/
+*.apk
+*.aab
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-.venv/
-venv/
+*.pyc
+
+# Firebase emulator / debug logs
+*-debug.log
+firebase/tests/node_modules/
+
+# Local secrets (service-account keys must never be committed)
+.env.local
+.env.*.local
+*service-account*.json
+
+# OS
+.DS_Store

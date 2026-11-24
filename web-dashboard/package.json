@@ -6,7 +6,10 @@
     "dev": "next dev -p 3300",
     "build": "next build",
     "start": "next start -p 3300",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "npm --prefix ../scripts run seed:emulator",
+    "seed:prod": "npm --prefix ../scripts run seed:prod",
+    "seed:emulator": "npm --prefix ../scripts run seed:emulator"
   },
   "dependencies": {
     "firebase": "^11.3.1",
