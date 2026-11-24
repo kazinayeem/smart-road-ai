@@ -6,8 +6,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.osmdroid.config.Configuration
-import org.osmdroid.views.MapView
+import android.content.Intent
+import org.maplibre.android.maps.MapView
+import org.smartpothole.app.route.RouteActivity
 import org.smartpothole.app.R
 import org.smartpothole.app.location.LocationTracker
 import org.smartpothole.app.location.NearbyPotholeMonitor
@@ -24,11 +25,6 @@ class MapFragment : Fragment(R.layout.fragment_map), PermissionAware {
     private var warnings: LocalPotholeWarningManager? = null
     private var nearby: NearbyPotholeMonitor? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", 0))
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val banner = view.findViewById<View>(R.id.hazardBanner)
         val sheet = view.findViewById<View>(R.id.hazardSheet)
@@ -37,17 +33,18 @@ class MapFragment : Fragment(R.layout.fragment_map), PermissionAware {
         val speed = view.findViewById<TextView>(R.id.tvSpeed)
         val orientationFab = view.findViewById<FloatingActionButton>(R.id.fabOrientation)
 
-        banner.marginForSafeArea(top = true)
+        view.findViewById<View>(R.id.mapTop).padForSafeArea(top = true)
+        view.findViewById<View>(R.id.btnWhereTo).setOnClickListener { startActivity(Intent(requireContext(), RouteActivity::class.java)) }
         view.findViewById<View>(R.id.mapControls).marginForSafeArea()
         view.findViewById<View>(R.id.mapBottom).padForSafeArea()
         sheet.padForSafeArea()
 
         controller = LiveMapController(
-            requireContext(), view.findViewById<MapView>(R.id.mapView),
+            requireContext(), view.findViewById<MapView>(R.id.mapView), savedInstanceState,
             onHazardClick = { h, d -> showSheet(sheet, h, d) },
             onFollowChanged = { following -> recenter.visibility = if (following) View.GONE else View.VISIBLE },
             onHazardAhead = { h, d -> showBanner(banner, h, d) },
-            onHazardsLoaded = { n -> if (tracker?.lastKnownLocation != null) status.text = "$n active hazard${if (n == 1) "" else "s"}" }
+            onHazardsLoaded = { list -> if (tracker?.lastKnownLocation != null) status.text = "${list.size} active hazard${if (list.size == 1) "" else "s"}" }
         )
         warnings = LocalPotholeWarningManager(requireContext()).also { it.audioEnabled = Prefs.voice(requireContext()) }
         nearby = NearbyPotholeMonitor(requireContext(), warnings)
@@ -91,6 +88,11 @@ class MapFragment : Fragment(R.layout.fragment_map), PermissionAware {
         sheet.findViewById<TextView>(R.id.sheetMeta).text = "${Severity.statusLabel(h.status)} · seen ${h.totalDetections}×$away"
         sheet.findViewById<TextView>(R.id.sheetCoords).text = String.format("%.5f, %.5f", h.latitude, h.longitude)
     }
+
+    override fun onStart() { super.onStart(); controller?.onStart() }
+    override fun onStop() { super.onStop(); controller?.onStop() }
+    override fun onLowMemory() { super.onLowMemory(); controller?.onLowMemory() }
+    override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); controller?.onSaveInstanceState(outState) }
 
     override fun onResume() {
         super.onResume()

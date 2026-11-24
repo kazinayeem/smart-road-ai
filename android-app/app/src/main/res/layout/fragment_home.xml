@@ -11,6 +11,8 @@
         android:id="@+id/homeContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/sp_gutter"
         android:paddingTop="@dimen/sp_space_4"
@@ -156,7 +158,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Quick actions -->
+        <!-- Quick actions (2 x 2) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -164,27 +166,19 @@
             android:baselineAligned="false"
             android:orientation="horizontal">
 
-            <include
-                android:id="@+id/actionSplit"
-                layout="@layout/item_quick_action"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+            <include android:id="@+id/actionRoute" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+            <include android:id="@+id/actionSplit" layout="@layout/item_quick_action" android:layout_marginStart="@dimen/sp_space_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+        </LinearLayout>
 
-            <include
-                android:id="@+id/actionDrive"
-                layout="@layout/item_quick_action"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/sp_space_2"
-                android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <include
-                android:id="@+id/actionCompanion"
-                layout="@layout/item_quick_action"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+            <include android:id="@+id/actionDrive" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+            <include android:id="@+id/actionCompanion" layout="@layout/item_quick_action" android:layout_marginStart="@dimen/sp_space_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

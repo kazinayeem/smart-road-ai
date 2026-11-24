@@ -4,21 +4,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.osmdroid.views.MapView
+    <org.maplibre.android.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="Live road map with reported potholes" />
 
-    <!-- Navigation-style banner: nearest hazard ahead -->
-    <include
-        android:id="@+id/hazardBanner"
-        layout="@layout/view_hazard_banner"
+    <LinearLayout
+        android:id="@+id/mapTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="12dp" />
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="12dp">
+
+        <!-- "Where to?" opens the route planner -->
+        <TextView
+            android:id="@+id/btnWhereTo"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_pill_surface"
+            android:drawablePadding="12dp"
+            android:elevation="6dp"
+            android:focusable="true"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="18dp"
+            android:text="Where to? Plan a route and see potholes on it"
+            android:textAppearance="@style/SP.Text.Body"
+            android:textColor="@color/sp_on_surface_muted"
+            app:drawableStartCompat="@drawable/ic_place"
+            app:drawableTint="@color/sp_primary" />
+
+        <!-- Navigation-style banner: nearest hazard ahead -->
+        <include
+            android:id="@+id/hazardBanner"
+            layout="@layout/view_hazard_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
 
     <!-- Right-side controls -->
     <LinearLayout

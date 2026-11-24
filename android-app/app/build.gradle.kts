@@ -68,7 +68,10 @@ dependencies {
     // WorkManager for Offline-first Sync
     implementation("androidx.work:work-runtime-ktx:2.10.0")
 
-    // OpenStreetMap (osmdroid) for Offline & Realtime Map
+    // MapLibre (vector, roads-only style on free OpenFreeMap tiles) for the drive map, split mode and route planner
+    implementation("org.maplibre.gl:android-sdk:13.7.1")
+
+    // osmdroid (raster OSM) still used by the live-companion screen
     implementation("org.osmdroid:osmdroid-android:6.1.20")
 
     // Play Services Location

@@ -1,121 +1,181 @@
 package org.smartpothole.app.map
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.location.Location
-import android.view.MotionEvent
-import android.view.animation.LinearInterpolator
-import androidx.core.content.ContextCompat
+import android.os.Bundle
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import org.osmdroid.config.Configuration as OsmConfig
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import org.smartpothole.app.R
+import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.camera.CameraUpdateFactory
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.geometry.LatLngBounds
+import org.maplibre.android.location.LocationComponent
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.LocationComponentOptions
+import org.maplibre.android.location.OnCameraTrackingChangedListener
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.modes.RenderMode
+import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapView
+import org.maplibre.android.maps.Style
+import org.maplibre.android.style.expressions.Expression
+import org.maplibre.android.style.layers.CircleLayer
+import org.maplibre.android.style.layers.LineLayer
+import org.maplibre.android.style.layers.Property
+import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.SymbolLayer
+import org.maplibre.android.style.sources.GeoJsonOptions
+import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.geojson.Feature
+import org.maplibre.geojson.FeatureCollection
+import org.maplibre.geojson.LineString
+import org.maplibre.geojson.Point
 import org.smartpothole.app.sync.PotholeNode
-import org.smartpothole.app.ui.Severity
 import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.pow
 
 /**
- * Live, driving-style map on OpenStreetMap (osmdroid):
- *  - FOLLOW mode: camera tracks the user; HEADING_UP rotates the map so travel direction points up
- *    (like Google Maps navigation), NORTH_UP keeps north up.
- *  - The user marker glides between GPS fixes (no jumps) and the camera keeps the user in the lower
- *    third so more road ahead is visible.
- *  - Speed-aware zoom: closer in town, further out at speed.
- *  - Any manual drag/pinch leaves follow mode; [recenter] resumes it.
- *  - Active hazards from `reports/` are drawn as severity pins; [onHazardAhead] reports the nearest
- *    hazard roughly in the direction of travel.
- * Call [onResume]/[onPause]/[destroy] from the host lifecycle.
+ * Roads-only, driving-style live map (MapLibre + OpenFreeMap vector tiles):
+ *  - Navigation camera: follows GPS with heading-up rotation and a 45° tilt, user puck in the lower
+ *    part of the screen; speed-aware zoom. Panning leaves follow mode; [recenter] resumes it.
+ *  - Reported potholes as severity-coloured circles that cluster when zoomed out; tap for details.
+ *  - Optional planned routes ([setRoutes]); potholes on the selected route get a highlight ring.
+ * Hosts must forward lifecycle: onStart/onResume/onPause/onStop/onSaveInstanceState/onLowMemory/destroy.
  */
 class LiveMapController(
     private val context: Context,
     private val mapView: MapView,
+    savedInstanceState: Bundle? = null,
     private val onHazardClick: (PotholeNode, Float?) -> Unit = { _, _ -> },
     private val onFollowChanged: (Boolean) -> Unit = {},
     private val onHazardAhead: (PotholeNode?, Float) -> Unit = { _, _ -> },
-    private val onHazardsLoaded: (Int) -> Unit = {}
+    private val onHazardsLoaded: (List<PotholeNode>) -> Unit = {},
+    private val bottomInsetDp: Int = 92
 ) {
     enum class Orientation { HEADING_UP, NORTH_UP }
 
     var orientation = Orientation.HEADING_UP
-        set(value) { field = value; lastLocation?.let { moveCamera(it, animate = true) } }
-
+        private set
     var following = true
-        private set(value) {
-            if (field != value) { field = value; onFollowChanged(value) }
-        }
+        private set(value) { if (field != value) { field = value; onFollowChanged(value) } }
 
+    private var map: MapLibreMap? = null
+    private var style: Style? = null
+    private var location: LocationComponent? = null
+    private var lastLocation: Location? = null
+    private var lastZoomBucket = -1
     private val rtdb = FirebaseDatabase.getInstance()
     private var hazardsListener: ValueEventListener? = null
-    private val hazardMarkers = mutableListOf<Marker>()
-    private var hazards: List<PotholeNode> = emptyList()
-
-    private var userMarker: Marker? = null
-    private var lastLocation: Location? = null
-    private var displayedBearing = 0f
-    private var markerAnimator: ValueAnimator? = null
+    var hazards: List<PotholeNode> = emptyList()
+        private set
+    private val hazardById = mutableMapOf<String, PotholeNode>()
+    private var routes: List<RouteOption> = emptyList()
+    private var selectedRoute = 0
+    private val night = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
     init {
-        OsmConfig.getInstance().userAgentValue = context.packageName
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.setMultiTouchControls(true)
-        mapView.zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
-        mapView.isTilesScaledToDpi = true
-        mapView.minZoomLevel = 4.0
-        mapView.maxZoomLevel = 19.5
-        mapView.controller.setZoom(15.5)
-        mapView.controller.setCenter(GeoPoint(23.8103, 90.4125)) // service area until a real fix arrives
-        val night = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        if (night) mapView.overlayManager.tilesOverlay.setColorFilter(nightFilter())
-        installGestureDetection()
-    }
-
-    /** Night map: invert luminance, then pull brightness down so roads read light-on-dark without glare. */
-    private fun nightFilter(): ColorMatrixColorFilter {
-        val invert = ColorMatrix(floatArrayOf(
-            -1f, 0f, 0f, 0f, 255f,
-            0f, -1f, 0f, 0f, 255f,
-            0f, 0f, -1f, 0f, 255f,
-            0f, 0f, 0f, 1f, 0f))
-        val dim = ColorMatrix().apply { setScale(0.72f, 0.78f, 0.88f, 1f) }
-        invert.postConcat(dim)
-        return ColorMatrixColorFilter(invert)
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun installGestureDetection() {
-        // Only a real pan (past the system touch slop) or a pinch leaves follow mode; taps don't.
-        val slop = android.view.ViewConfiguration.get(context).scaledTouchSlop
-        var downX = 0f; var downY = 0f
-        mapView.setOnTouchListener { _, ev ->
-            when (ev.actionMasked) {
-                MotionEvent.ACTION_DOWN -> { downX = ev.x; downY = ev.y }
-                MotionEvent.ACTION_POINTER_DOWN -> following = false
-                MotionEvent.ACTION_MOVE -> if (abs(ev.x - downX) > slop || abs(ev.y - downY) > slop) following = false
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync { m ->
+            map = m
+            m.uiSettings.isCompassEnabled = true
+            m.uiSettings.isRotateGesturesEnabled = true
+            m.uiSettings.isTiltGesturesEnabled = true
+            // Keep the MapLibre logo and the OpenStreetMap/OpenFreeMap credit visible above floating controls.
+            val d = context.resources.displayMetrics.density
+            m.uiSettings.setLogoMargins((16 * d).toInt(), 0, 0, (bottomInsetDp * d).toInt())
+            m.uiSettings.setAttributionMargins((110 * d).toInt(), 0, 0, (bottomInsetDp * d).toInt())
+            m.cameraPosition = CameraPosition.Builder().target(LatLng(23.8103, 90.4125)).zoom(12.0).build()
+            m.setStyle(Style.Builder().fromJson(RoadMapStyle.json(night))) { s ->
+                style = s
+                addOverlayLayers(s)
+                enableLocation(m, s)
+                renderHazards(); renderRoutes()
+                lastLocation?.let { location?.forceLocationUpdate(it) }
             }
-            false
+            m.addOnMapClickListener { point -> handleClick(m, point) }
         }
     }
+
+    // ---------- layers ----------
+
+    private fun addOverlayLayers(s: Style) {
+        s.addSource(GeoJsonSource("routes-alt"))
+        s.addSource(GeoJsonSource("route"))
+        s.addLayer(LineLayer("routes-alt-line", "routes-alt").withProperties(
+            PropertyFactory.lineColor(if (night) "#64748B" else "#94A3B8"), PropertyFactory.lineWidth(6f),
+            PropertyFactory.lineCap(Property.LINE_CAP_ROUND), PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND), PropertyFactory.lineOpacity(0.8f)))
+        s.addLayer(LineLayer("route-casing", "route").withProperties(
+            PropertyFactory.lineColor("#0B4F63"), PropertyFactory.lineWidth(10f),
+            PropertyFactory.lineCap(Property.LINE_CAP_ROUND), PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND)))
+        s.addLayer(LineLayer("route-line", "route").withProperties(
+            PropertyFactory.lineColor(if (night) "#22D3EE" else "#0E7490"), PropertyFactory.lineWidth(6f),
+            PropertyFactory.lineCap(Property.LINE_CAP_ROUND), PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND)))
+
+        s.addSource(GeoJsonSource("hazards", GeoJsonOptions().withCluster(true).withClusterMaxZoom(14).withClusterRadius(42)))
+        val clustered = Expression.has("point_count")
+        s.addLayer(CircleLayer("hazard-clusters", "hazards").withFilter(clustered).withProperties(
+            PropertyFactory.circleColor(Color.parseColor("#C2410C")),
+            PropertyFactory.circleRadius(Expression.step(Expression.get("point_count"), Expression.literal(15), Expression.stop(10, 19), Expression.stop(50, 24))),
+            PropertyFactory.circleStrokeColor(Color.WHITE), PropertyFactory.circleStrokeWidth(2.5f)))
+        s.addLayer(SymbolLayer("hazard-cluster-count", "hazards").withFilter(clustered).withProperties(
+            PropertyFactory.textField(Expression.toString(Expression.get("point_count"))),
+            PropertyFactory.textFont(arrayOf("Noto Sans Bold")), PropertyFactory.textSize(13f),
+            PropertyFactory.textColor(Color.WHITE), PropertyFactory.textAllowOverlap(true)))
+        val single = Expression.not(clustered)
+        s.addLayer(CircleLayer("hazard-route-ring", "hazards").withFilter(Expression.all(single, Expression.eq(Expression.get("onRoute"), true))).withProperties(
+            PropertyFactory.circleRadius(16f), PropertyFactory.circleColor(Color.TRANSPARENT),
+            PropertyFactory.circleStrokeColor(if (night) "#22D3EE" else "#0E7490"), PropertyFactory.circleStrokeWidth(3f)))
+        s.addLayer(CircleLayer("hazard", "hazards").withFilter(single).withProperties(
+            PropertyFactory.circleColor(Expression.get("color")), PropertyFactory.circleRadius(9f),
+            PropertyFactory.circleStrokeColor(Color.WHITE), PropertyFactory.circleStrokeWidth(2.5f)))
+        s.addLayer(SymbolLayer("hazard-glyph", "hazards").withFilter(single).withProperties(
+            PropertyFactory.textField("!"), PropertyFactory.textFont(arrayOf("Noto Sans Bold")),
+            PropertyFactory.textSize(13f), PropertyFactory.textColor(Color.WHITE), PropertyFactory.textAllowOverlap(true),
+            PropertyFactory.textIgnorePlacement(true)))
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableLocation(m: MapLibreMap, s: Style) {
+        try {
+            val opts = LocationComponentOptions.builder(context)
+                .gpsDrawable(org.smartpothole.app.R.drawable.marker_user_nav)
+                .accuracyAlpha(0.12f)
+                .build()
+            val lc = m.locationComponent
+            // We feed fixes ourselves (forceLocationUpdate) from the app's single LocationTracker.
+            lc.activateLocationComponent(LocationComponentActivationOptions.builder(context, s)
+                .locationComponentOptions(opts).useDefaultLocationEngine(false).build())
+            lc.isLocationComponentEnabled = true
+            lc.renderMode = RenderMode.GPS
+            lc.cameraMode = CameraMode.TRACKING_GPS
+            lc.tiltWhileTracking(45.0)
+            lc.zoomWhileTracking(16.8)
+            lc.addOnCameraTrackingChangedListener(object : OnCameraTrackingChangedListener {
+                override fun onCameraTrackingDismissed() { following = false }
+                override fun onCameraTrackingChanged(currentMode: Int) {}
+            })
+            mapView.post { lc.paddingWhileTracking(doubleArrayOf(0.0, mapView.height * 0.42, 0.0, 0.0)) }
+            location = lc
+        } catch (e: Exception) {
+            android.util.Log.w("LiveMap", "Location layer unavailable: ${e.message}")
+        }
+    }
+
+    // ---------- data ----------
 
     fun startHazards() {
         if (hazardsListener != null) return
         hazardsListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                hazards = snapshot.children.mapNotNull { PotholeNode.fromReport(it) }.filter { it.isActive }
+                hazards = snapshot.children.mapNotNull { c -> PotholeNode.fromReport(c)?.also { it.potholeId = c.key ?: it.potholeId } }.filter { it.isActive }
+                hazardById.clear(); hazards.forEach { hazardById[it.potholeId] = it }
                 renderHazards()
-                onHazardsLoaded(hazards.size)
-                lastLocation?.let { evaluateHazardAhead(it) }
+                onHazardsLoaded(hazards)
+                lastLocation?.let(::evaluateHazardAhead)
             }
             override fun onCancelled(error: DatabaseError) = Unit
         }
@@ -123,122 +183,127 @@ class LiveMapController(
     }
 
     private fun renderHazards() {
-        hazardMarkers.forEach { mapView.overlays.remove(it) }
-        hazardMarkers.clear()
-        for (h in hazards) {
-            val m = Marker(mapView).apply {
-                position = GeoPoint(h.latitude, h.longitude)
-                icon = ContextCompat.getDrawable(context, Severity.markerRes(h.priority, h.status))
-                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                title = "${Severity.label(h.priority)} pothole"
-                setOnMarkerClickListener { _, _ ->
-                    val dist = lastLocation?.let { distance(it, h) }
-                    onHazardClick(h, dist)
-                    true
-                }
+        val s = style ?: return
+        val onRoute = routes.getOrNull(selectedRoute)?.hazards?.map { it.node.potholeId }?.toSet() ?: emptySet()
+        val features = hazards.map { h ->
+            Feature.fromGeometry(Point.fromLngLat(h.longitude, h.latitude)).apply {
+                addStringProperty("id", h.potholeId)
+                addStringProperty("color", colorFor(h))
+                addBooleanProperty("onRoute", h.potholeId in onRoute)
             }
-            hazardMarkers += m
-            mapView.overlays.add(0, m) // below the user marker
         }
-        mapView.invalidate()
+        s.getSourceAs<GeoJsonSource>("hazards")?.setGeoJson(FeatureCollection.fromFeatures(features))
     }
 
-    /** Feed every GPS fix here. */
+    private fun colorFor(h: PotholeNode) = when {
+        h.status in setOf("ASSIGNED", "ACCEPTED", "IN_PROGRESS", "REPAIR_SUBMITTED", "CITY_VERIFICATION") -> "#6D28D9"
+        h.priority == "CRITICAL" || h.priority == "HIGH" -> "#DC2626"
+        h.priority == "MEDIUM" -> "#D97706"
+        else -> "#2563EB"
+    }
+
+    // ---------- routes ----------
+
+    fun setRoutes(options: List<RouteOption>, selected: Int, frame: Boolean) {
+        routes = options; selectedRoute = selected
+        renderRoutes(); renderHazards()
+        if (frame) frameRoute()
+    }
+
+    private fun renderRoutes() {
+        val s = style ?: return
+        val sel = routes.getOrNull(selectedRoute)
+        val alts = routes.filterIndexed { i, _ -> i != selectedRoute }.map { Feature.fromGeometry(lineOf(it)) }
+        s.getSourceAs<GeoJsonSource>("routes-alt")?.setGeoJson(FeatureCollection.fromFeatures(alts))
+        s.getSourceAs<GeoJsonSource>("route")?.setGeoJson(FeatureCollection.fromFeatures(listOfNotNull(sel?.let { Feature.fromGeometry(lineOf(it)) })))
+    }
+
+    private fun lineOf(r: RouteOption) = LineString.fromLngLats(r.points.map { Point.fromLngLat(it[0], it[1]) })
+
+    /** Pixels covered by floating UI at the top / bottom of the map, so framed routes stay visible. */
+    var frameTopPx = 0
+    var frameBottomPx = 0
+
+    fun frameRoute() {
+        val m = map ?: return
+        val r = routes.getOrNull(selectedRoute) ?: return
+        if (r.points.size < 2) return
+        following = false
+        location?.cameraMode = CameraMode.NONE
+        val b = LatLngBounds.Builder().apply { r.points.forEach { include(LatLng(it[1], it[0])) } }.build()
+        val pad = (48 * context.resources.displayMetrics.density).toInt()
+        val top = maxOf(pad, frameTopPx + pad / 2)
+        val bottom = maxOf(pad, frameBottomPx + pad / 2)
+        m.animateCamera(CameraUpdateFactory.newLatLngBounds(b, pad, top, pad, bottom), 700)
+    }
+
+    fun focus(lat: Double, lon: Double) {
+        following = false
+        location?.cameraMode = CameraMode.NONE
+        map?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 17.0), 600)
+    }
+
+    // ---------- location / camera ----------
+
     fun onLocation(loc: Location) {
-        val prev = lastLocation
         lastLocation = loc
-        val target = GeoPoint(loc.latitude, loc.longitude)
-        val marker = userMarker ?: Marker(mapView).apply {
-            icon = ContextCompat.getDrawable(context, R.drawable.marker_user_nav)
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-            isFlat = true
-            infoWindow = null
-            position = target
-            mapView.overlays.add(this)
-            userMarker = this
+        val lc = location
+        lc?.forceLocationUpdate(loc)
+        val speed = if (loc.hasSpeed()) loc.speed else 0f
+        val bucket = when { speed < 4f -> 0; speed < 12f -> 1; speed < 22f -> 2; else -> 3 }
+        if (following && bucket != lastZoomBucket) {
+            lastZoomBucket = bucket
+            lc?.zoomWhileTracking(doubleArrayOf(17.4, 16.8, 16.0, 15.2)[bucket], 1200)
         }
-        val moving = loc.hasSpeed() && loc.speed > 1.0f && loc.hasBearing()
-        val newBearing = if (moving) loc.bearing else displayedBearing
-
-        // Glide the marker from where it is now to the new fix over ~the GPS interval.
-        markerAnimator?.cancel()
-        val from = marker.position
-        val fromBearing = displayedBearing
-        val delta = shortestAngle(fromBearing, newBearing)
-        markerAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = if (prev == null) 0 else 900
-            interpolator = LinearInterpolator()
-            addUpdateListener { a ->
-                val f = a.animatedFraction
-                marker.position = GeoPoint(
-                    from.latitude + (target.latitude - from.latitude) * f,
-                    from.longitude + (target.longitude - from.longitude) * f
-                )
-                displayedBearing = (fromBearing + delta * f + 360f) % 360f
-                marker.rotation = -displayedBearing // flat marker: rotates with the map, so geographic bearing is correct in both modes
-                mapView.invalidate()
-            }
-            start()
-        }
-        if (following) moveCamera(loc, animate = prev != null)
+        if (lc == null && following) map?.animateCamera(CameraUpdateFactory.newLatLng(LatLng(loc.latitude, loc.longitude)), 800)
         evaluateHazardAhead(loc)
-    }
-
-    private fun moveCamera(loc: Location, animate: Boolean) {
-        val zoom = zoomForSpeed(if (loc.hasSpeed()) loc.speed else 0f)
-        val headingUp = orientation == Orientation.HEADING_UP
-        val bearing = if (loc.hasBearing() && loc.hasSpeed() && loc.speed > 1f) loc.bearing else displayedBearing
-        // Put the user ~25% below the centre (more road visible ahead) when heading-up.
-        val centre = if (headingUp) aheadOf(loc, bearing, zoom) else GeoPoint(loc.latitude, loc.longitude)
-        val mapOrientation = if (headingUp) (360f - bearing) % 360f else 0f
-        if (animate) mapView.controller.animateTo(centre, zoom, 900L, mapOrientation)
-        else {
-            mapView.controller.setZoom(zoom)
-            mapView.mapOrientation = mapOrientation
-            mapView.controller.setCenter(centre)
-        }
-    }
-
-    private fun aheadOf(loc: Location, bearing: Float, zoom: Double): GeoPoint {
-        val metersPerPixel = 156543.03392 * cos(Math.toRadians(loc.latitude)) / 2.0.pow(zoom) /
-            context.resources.displayMetrics.density
-        val aheadMeters = (mapView.height.takeIf { it > 0 } ?: 1200) * 0.25 * metersPerPixel
-        return GeoPoint(loc.latitude, loc.longitude).destinationPoint(aheadMeters, bearing.toDouble())
-    }
-
-    private fun zoomForSpeed(speedMs: Float): Double = when {
-        speedMs < 4f -> 17.5     // walking / crawling traffic
-        speedMs < 12f -> 17.0    // city (< ~43 km/h)
-        speedMs < 22f -> 16.3    // arterial roads
-        else -> 15.6             // highway
     }
 
     fun recenter() {
         following = true
-        lastLocation?.let { moveCamera(it, animate = true) }
+        location?.cameraMode = if (orientation == Orientation.HEADING_UP) CameraMode.TRACKING_GPS else CameraMode.TRACKING_GPS_NORTH
+        location?.tiltWhileTracking(if (orientation == Orientation.HEADING_UP) 45.0 else 0.0)
+        lastZoomBucket = -1
+        lastLocation?.let { onLocation(it) }
     }
 
     fun toggleOrientation(): Orientation {
         orientation = if (orientation == Orientation.HEADING_UP) Orientation.NORTH_UP else Orientation.HEADING_UP
-        if (orientation == Orientation.NORTH_UP) mapView.mapOrientation = 0f
+        recenter()
         return orientation
     }
 
-    fun zoomIn() { following = false; mapView.controller.zoomIn() }
-    fun zoomOut() { following = false; mapView.controller.zoomOut() }
+    fun zoomIn() { map?.animateCamera(CameraUpdateFactory.zoomIn()) }
+    fun zoomOut() { map?.animateCamera(CameraUpdateFactory.zoomOut()) }
+
+    private fun handleClick(m: MapLibreMap, point: LatLng): Boolean {
+        val screen = m.projection.toScreenLocation(point)
+        val cluster = m.queryRenderedFeatures(screen, "hazard-clusters").firstOrNull()
+        if (cluster != null) {
+            following = false
+            location?.cameraMode = CameraMode.NONE
+            m.animateCamera(CameraUpdateFactory.newLatLngZoom(point, m.cameraPosition.zoom + 2), 500)
+            return true
+        }
+        val f = m.queryRenderedFeatures(screen, "hazard", "hazard-glyph").firstOrNull() ?: return false
+        val h = hazardById[f.getStringProperty("id")] ?: return false
+        onHazardClick(h, lastLocation?.let { distance(it, h) })
+        return true
+    }
 
     private fun evaluateHazardAhead(loc: Location) {
+        val pool = routes.getOrNull(selectedRoute)?.hazards?.map { it.node } ?: hazards
         var best: PotholeNode? = null
         var bestDist = Float.MAX_VALUE
         val moving = loc.hasSpeed() && loc.speed > 1.5f && loc.hasBearing()
-        for (h in hazards) {
+        for (h in pool) {
             val d = distance(loc, h)
             if (d > 600f || d >= bestDist) continue
             if (moving) {
-                val to = FloatArray(2)
-                Location.distanceBetween(loc.latitude, loc.longitude, h.latitude, h.longitude, to)
-                val bearingTo = (to[1] + 360f) % 360f
-                if (abs(shortestAngle(loc.bearing, bearingTo)) > 45f) continue
+                val r = FloatArray(2)
+                Location.distanceBetween(loc.latitude, loc.longitude, h.latitude, h.longitude, r)
+                val delta = ((r[1] - loc.bearing + 540f) % 360f) - 180f
+                if (abs(delta) > 45f) continue
             }
             best = h; bestDist = d
         }
@@ -251,15 +316,17 @@ class LiveMapController(
         return r[0]
     }
 
-    private fun shortestAngle(from: Float, to: Float): Float = ((to - from + 540f) % 360f) - 180f
-
+    // ---------- lifecycle ----------
+    fun onStart() = mapView.onStart()
     fun onResume() = mapView.onResume()
     fun onPause() = mapView.onPause()
+    fun onStop() = mapView.onStop()
+    fun onLowMemory() = mapView.onLowMemory()
+    fun onSaveInstanceState(out: Bundle) = mapView.onSaveInstanceState(out)
 
     fun destroy() {
-        markerAnimator?.cancel()
         hazardsListener?.let { rtdb.getReference("reports").removeEventListener(it) }
         hazardsListener = null
-        mapView.onDetach()
+        mapView.onDestroy()
     }
 }

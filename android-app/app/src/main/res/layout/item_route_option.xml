@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    app:strokeColor="@color/vehicle_card_stroke"
+    app:strokeWidth="1.5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/optLabels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fastest"
+            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+            android:textColor="@color/sp_secondary" />
+
+        <TextView
+            android:id="@+id/optTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="16 min · 15.4 km"
+            android:textAppearance="@style/SP.Text.Subtitle" />
+
+        <TextView
+            android:id="@+id/optHazards"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="3 reported potholes"
+            android:textAppearance="@style/SP.Text.Label" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

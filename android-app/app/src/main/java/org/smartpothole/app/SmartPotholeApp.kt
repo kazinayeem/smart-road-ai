@@ -22,6 +22,7 @@ class SmartPotholeApp : Application() {
     override fun onCreate() {
         super.onCreate()
         initFirebaseExplicitly()
+        org.maplibre.android.MapLibre.getInstance(this) // must run before any MapLibre MapView is inflated
         schedulePeriodicSyncWorker()
         registerImmediateSyncOnReconnect()
     }

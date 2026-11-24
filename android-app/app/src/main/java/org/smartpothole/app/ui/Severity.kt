@@ -40,6 +40,18 @@ object Severity {
         tv.text = text
     }
 
+    /** What the city corporation has done with a report, in plain words. */
+    fun cityStatus(status: String) = when (status) {
+        "NEW", "NEW_REPORT" -> "Reported · awaiting city review"
+        "UNDER_REVIEW" -> "City is reviewing"
+        "VERIFIED" -> "Verified by the city"
+        "ASSIGNED", "ACCEPTED" -> "Repair crew assigned"
+        "IN_PROGRESS" -> "Repair in progress"
+        "REPAIR_SUBMITTED", "CITY_VERIFICATION" -> "Repaired · awaiting city check"
+        "RESOLVED" -> "Fixed"
+        else -> statusLabel(status)
+    }
+
     fun statusLabel(status: String) = status.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
 
     fun color(ctx: Context, res: Int) = ContextCompat.getColor(ctx, res)

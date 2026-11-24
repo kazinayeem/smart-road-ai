@@ -16,8 +16,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import org.osmdroid.config.Configuration as OsmConfig
-import org.osmdroid.views.MapView
+import org.maplibre.android.maps.MapView
 import org.smartpothole.app.R
 import org.smartpothole.app.ai.DetectionResult
 import org.smartpothole.app.camera.CameraActivity
@@ -57,7 +56,6 @@ class SplitModeActivity : AppCompatActivity(), DetectionController.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         edgeToEdge()
-        OsmConfig.getInstance().load(this, getSharedPreferences("osmdroid", 0))
         setContentView(R.layout.activity_split_mode)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         findViewById<View>(R.id.cameraHud).padForSafeArea(top = true)
@@ -77,7 +75,7 @@ class SplitModeActivity : AppCompatActivity(), DetectionController.Listener {
         val banner = findViewById<View>(R.id.hazardBanner)
         val recenter = findViewById<ExtendedFloatingActionButton>(R.id.fabRecenter)
 
-        map = LiveMapController(this, findViewById<MapView>(R.id.mapView),
+        map = LiveMapController(this, findViewById<MapView>(R.id.mapView), savedInstanceState, bottomInsetDp = 76,
             onFollowChanged = { f -> recenter.visibility = if (f) View.GONE else View.VISIBLE },
             onHazardAhead = { h, d -> showBanner(banner, h, d) })
         recenter.setOnClickListener { map?.recenter() }
@@ -166,6 +164,10 @@ class SplitModeActivity : AppCompatActivity(), DetectionController.Listener {
     }
     override fun onNotReported(detectedAt: Long, reason: String) { tvLast.text = "Seen ${TimeFormat.time(detectedAt)} · $reason" }
 
+    override fun onStart() { super.onStart(); map?.onStart() }
+    override fun onStop() { super.onStop(); map?.onStop() }
+    override fun onLowMemory() { super.onLowMemory(); map?.onLowMemory() }
+    override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); map?.onSaveInstanceState(outState) }
     override fun onResume() { super.onResume(); map?.onResume(); map?.startHazards(); tracker?.start() }
     override fun onPause() { super.onPause(); map?.onPause(); tracker?.stopUpdates() }
 

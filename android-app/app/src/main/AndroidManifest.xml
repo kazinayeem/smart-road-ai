@@ -39,6 +39,11 @@
             android:theme="@style/Theme.SmartPothole.Immersive" />
 
         <activity
+            android:name=".route.RouteActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+
+        <activity
             android:name=".ui.OnboardingActivity"
             android:exported="false" />
 

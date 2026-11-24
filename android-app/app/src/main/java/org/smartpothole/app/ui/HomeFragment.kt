@@ -46,6 +46,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), PermissionAware {
         bindProfile(view)
 
         view.findViewById<View>(R.id.cardStartDetection).setOnClickListener { startActivity(Intent(requireContext(), CameraActivity::class.java)) }
+        quickAction(view, R.id.actionRoute, R.drawable.ic_place, "Plan route") { startActivity(Intent(requireContext(), org.smartpothole.app.route.RouteActivity::class.java)) }
         quickAction(view, R.id.actionSplit, R.drawable.ic_split, "Split mode") { startActivity(Intent(requireContext(), SplitModeActivity::class.java)) }
         quickAction(view, R.id.actionDrive, R.drawable.ic_navigation, "Drive map") { (activity as? MainActivity)?.selectTab(R.id.nav_map) }
         quickAction(view, R.id.actionCompanion, R.drawable.ic_group, "Live companion") { startActivity(Intent(requireContext(), SessionHubActivity::class.java)) }
