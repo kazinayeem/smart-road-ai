@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { PotholeReport, PriorityLevel } from '@/types';
-import { submitPotholeReport } from '@/lib/firebase';
+// Web Driver Mode is a SIMULATION (simulated position, no on-device model in the browser).
+// It must never write reports into the real database; real reports come from the Android app
+// or the citizen report form, which use real GPS.
+const submitPotholeReport = async (_report: unknown): Promise<never> => {
+  throw new Error('Driver Mode on the web is a simulation. Use the Android app or the Report form to submit real reports.');
+};
 import {
   Camera,
   MapPin,
@@ -329,7 +334,7 @@ export const DriverMode: React.FC<DriverModeProps> = ({
       setInstantMarkSuccess(`⚡ Hazard marked at GPS [${driverLat.toFixed(4)}, ${driverLng.toFixed(4)}]! Live sync to City Corporation.`);
       setTimeout(() => setInstantMarkSuccess(null), 4000);
     } catch (err) {
-      console.error('Instant GPS mark error:', err);
+      window.alert(err instanceof Error ? err.message : 'Submission failed.');
     } finally {
       setIsSubmitting(false);
     }
@@ -362,7 +367,7 @@ export const DriverMode: React.FC<DriverModeProps> = ({
         setShowSubmitModal(false);
       }, 2000);
     } catch (err) {
-      console.error('Submit error:', err);
+      window.alert(err instanceof Error ? err.message : 'Submission failed.');
     } finally {
       setIsSubmitting(false);
     }
@@ -378,7 +383,7 @@ export const DriverMode: React.FC<DriverModeProps> = ({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-base font-bold tracking-tight">Driver Mode &amp; Live Road Proximity Scanner</h2>
+              <h2 className="text-base font-bold tracking-tight">Driver Mode (simulation — does not submit real reports)</h2>
               <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold border border-emerald-500/30">
                 ACTIVE
               </span>
