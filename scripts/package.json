@@ -1,0 +1,12 @@
+{
+  "name": "smartpothole-scripts",
+  "private": true,
+  "description": "Admin scripts. seed:emulator targets the local emulators; seed:prod needs GOOGLE_APPLICATION_CREDENTIALS.",
+  "scripts": {
+    "seed:emulator": "FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIREBASE_DATABASE_EMULATOR_HOST=127.0.0.1:9000 node seed_demo_accounts.js",
+    "seed:prod": "node seed_demo_accounts.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

@@ -8,9 +8,10 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  connectAuthEmulator,
   User as FirebaseUser,
 } from 'firebase/auth';
-import { getDatabase, ref, get, update, onValue, push } from 'firebase/database';
+import { getDatabase, ref, get, update, onValue, push, connectDatabaseEmulator } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { PotholeReport, UserProfile, Contractor, ActivityLogEntry, UserRole } from '@/types';
 
@@ -29,6 +30,17 @@ export const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 export const rtdb = getDatabase(app);
+
+// Local development / end-to-end testing against the Firebase emulators (never in production builds
+// unless explicitly enabled).
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === '1' && typeof window !== 'undefined') {
+  const g = globalThis as unknown as { __spEmu?: boolean };
+  if (!g.__spEmu) {
+    g.__spEmu = true;
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+    connectDatabaseEmulator(rtdb, '127.0.0.1', 9000);
+  }
+}
 
 export const GENERIC_LOGIN_ERROR = 'Incorrect username/email or password.';
 const USERNAME_RE = /^[A-Za-z0-9_.]{3,20}$/;

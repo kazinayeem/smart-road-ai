@@ -1,0 +1,9 @@
+{
+  "_comment": "DEMO / DEVELOPMENT ACCOUNTS ONLY. Shared by the seed script, the web demo login (NEXT_PUBLIC_ENABLE_DEMO_LOGIN=1) and the Android debug build. Change the passwords (env DEMO_*_PASSWORD) before seeding any shared environment.",
+  "accounts": [
+    { "key": "CITY_CORPORATION", "label": "City Corporation (admin)", "email": "city@pothole.org", "username": "city_admin", "password": "CityAdmin@2026!", "name": "Kamal Hossain (Executive Engineer)", "role": "CITY_CORPORATION", "department": "Dhaka North City Corporation (Zone 4)", "vehicleType": "CAR" },
+    { "key": "CONTRACTOR", "label": "Contractor", "email": "contractor@pothole.org", "username": "contractor_apex", "password": "Contractor@2026!", "name": "Tariqul Islam (Project Lead)", "role": "CONTRACTOR", "companyName": "Apex Road Infrastructure Ltd.", "vehicleType": "TRUCK" },
+    { "key": "CITIZEN", "label": "Citizen", "email": "citizen@pothole.org", "username": "citizen_rahim", "password": "Citizen@2026!", "name": "Rahim Ahmed", "role": "CITIZEN", "vehicleType": "MOTORCYCLE" },
+    { "key": "CITIZEN_2", "label": "Citizen 2 (for group / companion tests)", "email": "citizen2@pothole.org", "username": "citizen_karim", "password": "Citizen2@2026!", "name": "Karim Uddin", "role": "CITIZEN", "vehicleType": "CAR" }
+  ]
+}

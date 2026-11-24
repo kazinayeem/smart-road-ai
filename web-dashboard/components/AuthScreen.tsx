@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { UserProfile } from '@/types';
 import { login, registerCitizen, requestPasswordReset } from '@/lib/firebase';
 import { Shield, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { DEMO_ACCOUNTS, DEMO_LOGIN_ENABLED } from '@/lib/demoAccounts';
 
 const VEHICLES: Record<string, string> = {
   MOTORCYCLE: 'Motorcycle / Bike',
@@ -54,6 +55,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ mode, onLoginSuccess }) 
       onLoginSuccess(user);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const demoLogin = async (email: string, pw: string) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      onLoginSuccess(await login(email, pw));
+    } catch (err: unknown) {
+      setError(
+        (err instanceof Error ? err.message : 'Sign-in failed.') +
+          ' Demo accounts must be seeded first (scripts: npm run seed:emulator or seed:prod).'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -170,6 +186,26 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ mode, onLoginSuccess }) 
             </button>
           )}
         </form>
+
+        {mode === 'LOGIN' && DEMO_LOGIN_ENABLED && (
+          <section aria-labelledby="demo-h" className="rounded-2xl border border-amber-300 bg-amber-50 p-4 space-y-2">
+            <h2 id="demo-h" className="text-sm font-semibold text-amber-900">Demo quick login (development only)</h2>
+            <div className="grid gap-2">
+              {DEMO_ACCOUNTS.map((a) => (
+                <button
+                  key={a.key}
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => demoLogin(a.email, a.password)}
+                  className="min-h-[44px] rounded-xl border border-amber-300 bg-white px-3 py-2 text-left text-sm hover:bg-amber-100 disabled:opacity-60"
+                >
+                  <span className="font-medium text-slate-900">{a.label}</span>
+                  <span className="block text-xs text-slate-600">{a.username} · {a.email}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         <p className="text-center text-sm text-slate-600">
           {mode === 'LOGIN' ? (

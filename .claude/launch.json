@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "firebase-emulators",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd firebase/tests && npx firebase emulators:start --only auth,database --project cryptro --config ../firebase.json"],
+      "port": 9000
+    },
+    {
+      "name": "web-emulated",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd web-dashboard && NEXT_DIST_DIR=.next-emu NEXT_PUBLIC_USE_FIREBASE_EMULATORS=1 npx next dev -p 3301"],
+      "port": 3301
+    }
+  ]
+}

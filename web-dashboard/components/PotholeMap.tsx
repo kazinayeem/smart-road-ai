@@ -29,6 +29,7 @@ export const PotholeMap: React.FC<PotholeMapProps> = ({
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // 1. Live Real-time Location Detection via HTML5 Geolocation API
   useEffect(() => {
@@ -44,12 +45,10 @@ export const PotholeMap: React.FC<PotholeMapProps> = ({
     };
 
     const handleError = (err: GeolocationPositionError) => {
-      console.warn('Geolocation notice:', err.message);
+      // No invented position: without a real fix there is no "you are here" marker and
+      // quick-mark stays hidden. The map itself still opens on the default city view.
       setIsLocating(false);
-      if (!userLocation) {
-        setUserLocation({ lat: 23.8103, lng: 90.4125 });
-        setGpsAccuracy(15);
-      }
+      setLocationError(err.code === err.PERMISSION_DENIED ? 'Location permission denied' : 'Location unavailable');
     };
 
     setIsLocating(true);
@@ -361,12 +360,12 @@ export const PotholeMap: React.FC<PotholeMapProps> = ({
             {userLocation ? (
               <>Live GPS: <strong className="font-mono text-slate-900">{userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</strong> {gpsAccuracy ? `(±${gpsAccuracy}m)` : ''}</>
             ) : (
-              'Detecting GPS location...'
+              locationError || 'Detecting GPS location...'
             )}
           </span>
         </div>
         <div className="flex items-center space-x-1.5 bg-blue-50/95 backdrop-blur-md px-2.5 py-1.5 rounded-2xl border border-blue-200 shadow-sm text-[11px] text-blue-700 font-bold">
-          <span>🛡️ Safe Area Active (150m)</span>
+          <span>{userLocation ? '150 m alert radius around you' : 'Alert radius needs your location'}</span>
         </div>
       </div>
     </div>

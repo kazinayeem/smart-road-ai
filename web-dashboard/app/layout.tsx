@@ -1,16 +1,15 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata, Viewport } from 'next';
+import './globals.css';
+import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
-  title: "SmartPothole AI - Road Defect Management Platform",
-  description: "Enterprise Road Defect Identification, Realtime Lifecycle Management & Civic GIS Platform",
+  title: { default: 'SmartPothole AI', template: '%s · SmartPothole AI' },
+  description: 'Report, track and repair road potholes. On-device AI detection with a role-based civic workflow.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
@@ -21,7 +20,9 @@ export default function RootLayout({
           crossOrigin=""
         />
       </head>
-      <body className="min-h-screen bg-slate-50 antialiased">{children}</body>
+      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
