@@ -1,0 +1,31 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Gradle and Android build outputs
+.gradle/
+**/android-app/.gradle/
+**/build/
+**/android-app/app/build/
+.idea/
+*.iml
+local.properties
+.cxx/
+
+# Node & Next.js
+node_modules/
+**/node_modules/
+**/.next/
+**/out/
+*.tsbuildinfo
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/

@@ -1,0 +1,39 @@
+{
+  "model_name": "YOLOv8 Pothole Detector",
+  "source": "https://huggingface.co/peterhdd/pothole-detection-yolov8",
+  "architecture": "YOLOv8 DetectionModel (Single Class: Pothole)",
+  "input_resolution": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape": [
+    1,
+    5,
+    8400
+  ],
+  "classes": [
+    "pothole"
+  ],
+  "metrics": {
+    "pytorch_fp32": {
+      "size_mb": 21.48,
+      "avg_latency_ms": 62.33,
+      "p95_latency_ms": 79.45
+    },
+    "onnx_fp32": {
+      "size_mb": 42.67,
+      "avg_latency_ms": 47.55,
+      "p95_latency_ms": 53.86,
+      "mobile_compatible": true,
+      "runtime": "ONNX Runtime Mobile"
+    },
+    "onnx_int8_quantized": {
+      "size_mb": 10.96,
+      "avg_latency_ms": 76.91,
+      "size_reduction_percent": 74.3,
+      "mobile_compatible": true
+    }
+  }
+}

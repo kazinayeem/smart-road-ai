@@ -1,0 +1,13 @@
+{
+  "name": "smartpothole-rules-tests",
+  "private": true,
+  "description": "Security-rule tests for the SmartPothole Realtime Database, run against the local Firebase emulator.",
+  "scripts": {
+    "test": "firebase emulators:exec --only database --project demo-smartpothole --config ../firebase.json \"node --test rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.3.1",
+    "firebase-tools": "^14.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SmartPothole AI</string>
+    <string name="quick_detect">Scan Road Potholes</string>
+    <string name="view_map">Open Hazard Map</string>
+    <string name="total_detected">Total Detected</string>
+    <string name="pending_sync">Pending Sync</string>
+    <string name="resolved_repairs">Resolved</string>
+    <string name="sync_status_online">Connected &amp; Synced</string>
+    <string name="sync_status_offline">Offline Mode (Local AI Active)</string>
+    <string name="capture_defect">Capture Defect</string>
+    <string name="confirm_submit">Confirm &amp; Submit Report</string>
+</resources>

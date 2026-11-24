@@ -1,0 +1,15 @@
+{
+  "reports": [
+    "status",
+    "reporterId",
+    "contractorId",
+    "priority",
+    "createdAt"
+  ],
+  "assignments": [
+    "contractorId",
+    "reportId",
+    "status",
+    "assignedAt"
+  ]
+}

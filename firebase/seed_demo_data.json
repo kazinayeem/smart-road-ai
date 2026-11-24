@@ -1,0 +1,183 @@
+{
+  "users": {
+    "citizen_demo_uid": {
+      "name": "Rahim Ahmed (Citizen)",
+      "email": "citizen@pothole.org",
+      "role": "CITIZEN",
+      "phone": "+8801711000001",
+      "createdAt": 1732360000000
+    },
+    "city_admin_demo_uid": {
+      "name": "Kamal Hossain (Executive Engineer)",
+      "email": "city@pothole.org",
+      "role": "CITY_CORPORATION",
+      "phone": "+8801711000002",
+      "department": "Dhaka North City Corporation (DNCC)",
+      "createdAt": 1732360000000
+    },
+    "contractor_demo_uid": {
+      "name": "M/S Apex Road Infrastructure Ltd.",
+      "email": "contractor@pothole.org",
+      "role": "CONTRACTOR",
+      "phone": "+8801711000003",
+      "companyName": "Apex Road Infrastructure Ltd.",
+      "contactPerson": "Tariqul Islam",
+      "createdAt": 1732360000000
+    }
+  },
+  "contractors": {
+    "contractor_demo_uid": {
+      "companyName": "Apex Road Infrastructure Ltd.",
+      "contactPerson": "Tariqul Islam",
+      "email": "contractor@pothole.org",
+      "phone": "+8801711000003",
+      "active": true,
+      "assignedTasksCount": 2,
+      "completedTasksCount": 8,
+      "rating": 4.8
+    },
+    "contractor_demo_uid_2": {
+      "companyName": "Delta Highway Engineering",
+      "contactPerson": "Nazmul Huda",
+      "email": "delta@pothole.org",
+      "phone": "+8801711000004",
+      "active": true,
+      "assignedTasksCount": 1,
+      "completedTasksCount": 14,
+      "rating": 4.9
+    }
+  },
+  "reports": {
+    "PTH-001": {
+      "id": "PTH-001",
+      "reportId": "PTH-001",
+      "reporterId": "citizen_demo_uid",
+      "reporterName": "Rahim Ahmed",
+      "detectionClass": "pothole",
+      "confidence": 0.94,
+      "latitude": 23.8069,
+      "longitude": 90.3687,
+      "gpsAccuracy": 5.4,
+      "priority": "HIGH",
+      "status": "NEW",
+      "source": "LIVE_CAMERA",
+      "address": "Mirpur 10 Roundabout, Section 10, Dhaka",
+      "notes": "Deep road surface cavity near metro rail pillar 142. Severe hazard for two-wheelers.",
+      "contractorId": null,
+      "createdAt": 1732365000000,
+      "updatedAt": 1732365000000,
+      "timestamp": 1732365000000
+    },
+    "PTH-002": {
+      "id": "PTH-002",
+      "reportId": "PTH-002",
+      "reporterId": "citizen_demo_uid",
+      "reporterName": "Rahim Ahmed",
+      "detectionClass": "pothole",
+      "confidence": 0.88,
+      "latitude": 23.7538,
+      "longitude": 90.3764,
+      "gpsAccuracy": 6.8,
+      "priority": "MEDIUM",
+      "status": "UNDER_REVIEW",
+      "source": "LIVE_CAMERA",
+      "address": "Road 27 (Old), Dhanmondi, Dhaka",
+      "notes": "Asphalt depression near the water pump intersection.",
+      "contractorId": null,
+      "createdAt": 1732363000000,
+      "updatedAt": 1732364000000,
+      "timestamp": 1732363000000
+    },
+    "PTH-003": {
+      "id": "PTH-003",
+      "reportId": "PTH-003",
+      "reporterId": "citizen_demo_uid",
+      "reporterName": "Rahim Ahmed",
+      "detectionClass": "pothole",
+      "confidence": 0.96,
+      "latitude": 23.7925,
+      "longitude": 90.4152,
+      "gpsAccuracy": 4.2,
+      "priority": "CRITICAL",
+      "status": "ASSIGNED",
+      "source": "LIVE_CAMERA",
+      "address": "Gulshan 2 North Avenue, Dhaka",
+      "notes": "Major road breakdown on busy commercial transit artery.",
+      "contractorId": "contractor_demo_uid",
+      "assignedTo": "Apex Road Infrastructure Ltd.",
+      "deadline": 1732537600000,
+      "createdAt": 1732350000000,
+      "updatedAt": 1732355000000,
+      "timestamp": 1732350000000
+    },
+    "PTH-004": {
+      "id": "PTH-004",
+      "reportId": "PTH-004",
+      "reporterId": "citizen_demo_uid",
+      "reporterName": "Rahim Ahmed",
+      "detectionClass": "pothole",
+      "confidence": 0.91,
+      "latitude": 23.8697,
+      "longitude": 90.3985,
+      "gpsAccuracy": 7.1,
+      "priority": "MEDIUM",
+      "status": "IN_PROGRESS",
+      "source": "LIVE_CAMERA",
+      "address": "Rabindra Sarani, Sector 3, Uttara, Dhaka",
+      "notes": "Milling machine deployed for hot-mix bitumen overlay.",
+      "contractorId": "contractor_demo_uid",
+      "assignedTo": "Apex Road Infrastructure Ltd.",
+      "deadline": 1732451200000,
+      "createdAt": 1732340000000,
+      "updatedAt": 1732352000000,
+      "timestamp": 1732340000000
+    },
+    "PTH-005": {
+      "id": "PTH-005",
+      "reportId": "PTH-005",
+      "reporterId": "citizen_demo_uid",
+      "reporterName": "Rahim Ahmed",
+      "detectionClass": "pothole",
+      "confidence": 0.95,
+      "latitude": 23.7785,
+      "longitude": 90.4002,
+      "gpsAccuracy": 3.9,
+      "priority": "HIGH",
+      "status": "RESOLVED",
+      "source": "LIVE_CAMERA",
+      "address": "Mohakhali Flyover Approach, Dhaka",
+      "notes": "Bitumen patch completed and compacted with heavy roller. Passed inspection.",
+      "contractorId": "contractor_demo_uid",
+      "assignedTo": "Apex Road Infrastructure Ltd.",
+      "createdAt": 1732200000000,
+      "updatedAt": 1732280000000,
+      "timestamp": 1732200000000
+    }
+  },
+  "activity_logs": {
+    "log_001": {
+      "reportId": "PTH-001",
+      "action": "DETECTION_SUBMITTED",
+      "actor": "Rahim Ahmed",
+      "role": "CITIZEN",
+      "timestamp": 1732365000000,
+      "details": "AI detected pothole via live CameraX on-device inference with 94% confidence"
+    },
+    "log_002": {
+      "reportId": "PTH-003",
+      "action": "ASSIGNED_TO_CONTRACTOR",
+      "actor": "Kamal Hossain",
+      "role": "CITY_CORPORATION",
+      "timestamp": 1732355000000,
+      "details": "Work order dispatched to Apex Road Infrastructure Ltd. SLA: 48 hours"
+    },
+    "log_003": {
+      "reportId": "PTH-005",
+      "action": "WORK_VERIFIED_AND_CLOSED",
+      "actor": "Kamal Hossain",
+      "role": "CITY_CORPORATION",
+      "timestamp": 1732280000000,
+      "details": "Bitumen patch certified in compliance with DNCC standard specs."
+    }
+  }
+}

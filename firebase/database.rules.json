@@ -1,0 +1,147 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "users": {
+      ".indexOn": ["role", "usernameLower"],
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION')",
+        ".validate": "newData.hasChildren(['role'])",
+        "role": {
+          ".validate": "(newData.val() === 'CITIZEN' || newData.val() === 'CITY_CORPORATION' || newData.val() === 'CONTRACTOR') && (root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION' || newData.val() === data.val() || (!data.exists() && newData.val() === 'CITIZEN'))"
+        },
+        "username": {
+          ".validate": "newData.isString() && newData.parent().parent().parent().child('usernames').child(newData.val().toLowerCase()).val() === $uid"
+        },
+        "usernameLower": {
+          ".validate": "newData.isString() && newData.val() === newData.val().toLowerCase()"
+        },
+        "vehicleType": {
+          ".validate": "newData.val() === 'MOTORCYCLE' || newData.val() === 'CAR' || newData.val() === 'BICYCLE' || newData.val() === 'CNG' || newData.val() === 'BUS' || newData.val() === 'TRUCK' || newData.val() === 'WALKING'"
+        },
+        "fcmToken": {
+          ".validate": "newData.isString() && newData.val().length < 4096"
+        }
+      }
+    },
+
+    "usernames": {
+      "$name": {
+        ".read": false,
+        ".write": "auth != null && ((!data.exists() && newData.val() === auth.uid) || (data.val() === auth.uid && !newData.exists()))",
+        ".validate": "newData.isString() && $name.matches(/^[a-z0-9_.]{3,20}$/)"
+      }
+    },
+
+    "reports": {
+      ".read": "auth != null",
+      ".indexOn": ["status", "reporterId", "contractorId", "priority", "createdAt", "latitude"],
+      "$reportId": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION' || (!data.exists() && newData.child('reporterId').val() === auth.uid && newData.child('status').val() === 'NEW') || (data.exists() && data.child('reporterId').val() === auth.uid && (data.child('status').val() === 'NEW' || data.child('status').val() === 'NEW_REPORT') && newData.child('reporterId').val() === auth.uid && newData.child('status').val() === data.child('status').val()) || (data.exists() && data.child('contractorId').val() === auth.uid && newData.child('reporterId').val() === data.child('reporterId').val() && newData.child('latitude').val() === data.child('latitude').val() && newData.child('longitude').val() === data.child('longitude').val() && newData.child('priority').val() === data.child('priority').val() && ((newData.child('contractorId').val() === auth.uid && (newData.child('status').val() === data.child('status').val() || (data.child('status').val() === 'ASSIGNED' && newData.child('status').val() === 'ACCEPTED') || (data.child('status').val() === 'ACCEPTED' && newData.child('status').val() === 'IN_PROGRESS') || ((data.child('status').val() === 'IN_PROGRESS' || data.child('status').val() === 'REPAIR_REJECTED') && newData.child('status').val() === 'REPAIR_SUBMITTED'))) || (data.child('status').val() === 'ASSIGNED' && newData.child('status').val() === 'ASSIGNMENT_DECLINED' && !newData.child('contractorId').exists()))))",
+        ".validate": "newData.hasChildren(['reporterId', 'latitude', 'longitude', 'status', 'createdAt'])",
+        "latitude": { ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90" },
+        "longitude": { ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180" },
+        "confidence": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+        "status": { ".validate": "newData.isString() && newData.val().matches(/^(NEW|NEW_REPORT|UNDER_REVIEW|VERIFIED|ASSIGNED|ACCEPTED|IN_PROGRESS|REPAIR_SUBMITTED|CITY_VERIFICATION|RESOLVED|REJECTED|DUPLICATE|ASSIGNMENT_DECLINED|REPAIR_REJECTED)$/)" },
+        "priority": { ".validate": "newData.isString() && newData.val().matches(/^(LOW|MEDIUM|HIGH|CRITICAL)$/)" },
+        "totalDetections": {
+          ".write": "auth != null && data.parent().exists() && newData.isNumber() && ((data.exists() && newData.val() === data.val() + 1) || (!data.exists() && newData.val() <= 2))",
+          ".validate": "newData.isNumber() && newData.val() >= 1"
+        },
+        "lastDetectedAt": {
+          ".write": "auth != null && data.parent().exists() && newData.isNumber() && newData.val() <= now + 60000",
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+
+    "detections": {
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION' || (query.orderByChild === 'reporterId' && query.equalTo === auth.uid))",
+      ".indexOn": ["potholeId", "reporterId", "timestamp", "sessionId"],
+      "$detectionId": {
+        ".read": "auth != null && data.child('reporterId').val() === auth.uid",
+        ".write": "auth != null && !data.exists() && newData.child('reporterId').val() === auth.uid",
+        ".validate": "newData.hasChildren(['reporterId', 'potholeId', 'latitude', 'longitude', 'timestamp'])",
+        "latitude": { ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90" },
+        "longitude": { ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180" },
+        "confidence": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+        "timestamp": { ".validate": "newData.isNumber() && newData.val() <= now + 60000" }
+      }
+    },
+
+    "potholes": {
+      ".read": "auth != null",
+      ".indexOn": ["status", "priority", "lastDetectedAt", "firstDetectedAt"],
+      "$potholeId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION'"
+      }
+    },
+
+    "contractors": {
+      ".read": "auth != null",
+      "$contractorId": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION' || auth.uid === $contractorId)"
+      }
+    },
+
+    "assignments": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION'",
+      ".indexOn": ["contractorId", "reportId", "status", "assignedAt"],
+      "$assignmentId": {
+        ".read": "auth != null && data.child('contractorId').val() === auth.uid",
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION' || (data.exists() && data.child('contractorId').val() === auth.uid && newData.child('contractorId').val() === auth.uid))"
+      }
+    },
+
+    "repair_updates": {
+      ".read": "auth != null",
+      "$reportId": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION' || root.child('reports').child($reportId).child('contractorId').val() === auth.uid)"
+      }
+    },
+
+    "activity_logs": {
+      ".read": "auth != null",
+      "$reportId": {
+        "$logId": {
+          ".write": "auth != null && !data.exists() && newData.child('changedByUid').val() === auth.uid",
+          ".validate": "newData.hasChildren(['timestamp', 'changedBy', 'changedByUid', 'newStatus']) && newData.child('timestamp').isNumber() && newData.child('timestamp').val() <= now + 60000"
+        }
+      }
+    },
+
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'CITY_CORPORATION')"
+      }
+    },
+
+    "session_codes": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null && ((!data.exists() && newData.parent().parent().child('live_sessions').child(newData.val()).child('scannerId').val() === auth.uid) || (data.exists() && root.child('live_sessions').child(data.val()).child('scannerId').val() === auth.uid))",
+        ".validate": "newData.isString() && $code.matches(/^[A-Z0-9]{6}$/)"
+      }
+    },
+
+    "live_sessions": {
+      ".indexOn": ["sessionCode", "status", "scannerId", "startedAt"],
+      "$sessionId": {
+        ".read": "auth != null && (data.child('scannerId').val() === auth.uid || data.child('participants').child(auth.uid).exists())",
+        ".write": "auth != null && ((!data.exists() && newData.child('scannerId').val() === auth.uid) || data.child('scannerId').val() === auth.uid)",
+        ".validate": "newData.hasChildren(['scannerId', 'status', 'sessionCode'])",
+        "status": { ".validate": "newData.val() === 'ACTIVE' || newData.val() === 'PAUSED' || newData.val() === 'ENDED'" },
+        "participants": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && (!newData.exists() || root.child('live_sessions').child($sessionId).child('status').val() === 'ACTIVE')",
+            ".validate": "newData.child('uid').val() === $uid && (newData.child('role').val() === 'COMPANION' || newData.parent().parent().child('scannerId').val() === $uid)"
+          }
+        }
+      }
+    }
+  }
+}
