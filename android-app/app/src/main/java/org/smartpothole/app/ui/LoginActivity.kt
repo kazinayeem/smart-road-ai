@@ -112,6 +112,34 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        // Debug builds only: one-tap rider demo accounts (the release source set provides none).
+        val demoContainer = findViewById<android.widget.LinearLayout>(R.id.layoutDemoLogin)
+        if (org.smartpothole.app.auth.DemoAccounts.riders.isNotEmpty()) {
+            demoContainer.visibility = View.VISIBLE
+            org.smartpothole.app.auth.DemoAccounts.riders.forEach { acc ->
+                demoContainer.addView(MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+                    text = acc.label
+                    isAllCaps = false
+                    minHeight = (48 * resources.displayMetrics.density).toInt()
+                    setOnClickListener {
+                        if (inFlight) return@setOnClickListener
+                        showError(null)
+                        setBusy(true)
+                        lifecycleScope.launch {
+                            try {
+                                AuthManager.signIn(this@LoginActivity, acc.email, acc.password)
+                                openHome()
+                            } catch (e: Exception) {
+                                showError("${e.message} (Seed demo accounts first: scripts → npm run seed:prod or seed:emulator.)")
+                            } finally {
+                                setBusy(false)
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
         btnForgot.setOnClickListener {
             val input = EditText(this).apply { hint = "Account email" }
             AlertDialog.Builder(this)

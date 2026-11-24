@@ -89,7 +89,16 @@ class MainActivity : AppCompatActivity() {
         findViewById<LinearLayout>(R.id.navTabProfile).setOnClickListener { showProfileDialog() }
 
         // Refresh the cached profile (role / vehicle may have changed on the server).
-        lifecycleScope.launch { runCatching { profile = AuthManager.loadProfile(this@MainActivity) } }
+        lifecycleScope.launch {
+            runCatching { profile = AuthManager.loadProfile(this@MainActivity) }
+            // Rider-only app: an account that was changed to an admin/contractor role is signed out.
+            if (profile?.role != null && profile?.role != "CITIZEN") {
+                Toast.makeText(this@MainActivity, AuthManager.RIDER_ONLY_ERROR, Toast.LENGTH_LONG).show()
+                AuthManager.signOut(this@MainActivity)
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+                finish()
+            }
+        }
         AuthManager.registerFcmToken()
         ReportSubmitter.enqueueSync(this)
     }

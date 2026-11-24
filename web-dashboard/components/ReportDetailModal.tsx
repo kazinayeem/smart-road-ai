@@ -98,7 +98,7 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
   ];
 
   const currentStepIndex = steps.indexOf(
-    report.status === 'UNDER_REVIEW'
+    report.status === 'UNDER_REVIEW' || report.status === 'NEW'
       ? 'NEW_REPORT'
       : report.status === 'ACCEPTED'
       ? 'ASSIGNED'
@@ -183,21 +183,21 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
                     <span className="text-xs font-mono font-bold text-slate-300">EDGE AI DETECTION TELEMETRY</span>
                   </div>
                   <span className="text-[11px] font-mono bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">
-                    Source: {report.source || 'LIVE_CAMERA'}
+                    Source: {report.source || 'UNKNOWN'}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                   <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                    <span className="text-slate-400 block text-[10px] uppercase">AI Confidence</span>
-                    <strong className="text-emerald-400 text-base">{(report.confidence * 100).toFixed(1)}%</strong>
-                    <span className="text-[10px] text-slate-400 block mt-0.5">YOLOv8 INT8 ONNX</span>
+                    <span className="text-slate-400 block text-[10px] uppercase">{report.source === 'LIVE_CAMERA' ? 'AI Confidence' : 'Report type'}</span>
+                    <strong className="text-emerald-400 text-base">{report.source === 'LIVE_CAMERA' ? `${(report.confidence * 100).toFixed(1)}%` : 'Manual'}</strong>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">{report.source === 'LIVE_CAMERA' ? 'On-device model' : 'Human observation'}</span>
                   </div>
 
                   <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
                     <span className="text-slate-400 block text-[10px] uppercase">GPS Accuracy</span>
-                    <strong className="text-blue-400 text-base">±{report.gpsAccuracy || 6} m</strong>
-                    <span className="text-[10px] text-slate-400 block mt-0.5">Fine Location Fix</span>
+                    <strong className="text-blue-400 text-base">{report.gpsAccuracy ? `±${Math.round(report.gpsAccuracy)} m` : 'Unknown'}</strong>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">{report.gpsAccuracy ? 'Device GPS estimate' : 'Entered manually'}</span>
                   </div>
                 </div>
 
@@ -215,8 +215,8 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
                     <span className="text-white text-right max-w-[200px] truncate">{report.address}</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
-                    <span>Evidence Mode:</span>
-                    <span className="text-emerald-400 font-semibold">Edge On-Device Only (No Camera Upload)</span>
+                    <span>Detected:</span>
+                    <span className="text-white">{new Date(report.firstDetectedAt || report.createdAt).toLocaleString()}{report.totalDetections && report.totalDetections > 1 ? ` · seen ${report.totalDetections}×, last ${new Date(report.lastDetectedAt || report.createdAt).toLocaleString()}` : ''}</span>
                   </div>
                 </div>
 
@@ -276,7 +276,7 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
                 </div>
 
                 {/* 1. If NEW_REPORT or UNDER_REVIEW: Verify or Reject */}
-                {(report.status === 'NEW_REPORT' || report.status === 'UNDER_REVIEW') && (
+                {(report.status === 'NEW' || report.status === 'NEW_REPORT' || report.status === 'UNDER_REVIEW') && (
                   <div className="space-y-3">
                     <p className="text-xs text-slate-600">Review AI detection evidence and verify defect validity:</p>
                     <div className="flex gap-2">

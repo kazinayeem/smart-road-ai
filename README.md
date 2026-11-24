@@ -5,7 +5,7 @@
 [![YOLOv8](https://img.shields.io/badge/AI%20Model-YOLOv8s%20INT8%20ONNX%20(10.96MB)-orange)](https://github.com/ultralytics/ultralytics)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20RTDB-amber?logo=firebase)](https://firebase.google.com/)
 
-A production-grade, end-to-end civic road maintenance ecosystem featuring **real-time on-device YOLOv8 AI inference on Android (CameraX)**, **zero camera frame / video uploads (metadata-only telemetry transmission)**, **strict role-gated authentication**, and a **multi-role municipal management web portal** for City Corporations, Contractors, and Citizens.
+An end-to-end civic road maintenance system (work in progress — see AUDIT_REPORT.md) featuring **real-time on-device YOLOv8 AI inference on Android (CameraX)**, **zero camera frame / video uploads (metadata-only telemetry transmission)**, **strict role-gated authentication**, and a **multi-role municipal management web portal** for City Corporations, Contractors, and Citizens.
 
 ---
 
@@ -17,7 +17,7 @@ A production-grade, end-to-end civic road maintenance ecosystem featuring **real
   - `CITY_CORPORATION`: Municipal Executive Engineer dashboard with triage queue, contractor assignment, SLA management, and final verification & closure authorization.
   - `CONTRACTOR`: Dedicated portal for assigned repair jobs, status updates (`IN_PROGRESS`, `REPAIR_SUBMITTED`), and repair notes. **Contractors cannot self-resolve tickets.**
   - `CITIZEN`: Real-time interactive Leaflet GIS map with color-coded severity markers, 1-tap on-device GPS mark submission, and personal submission tracking.
-- **Client-Side Security**: Citizen registration strictly assigns the `CITIZEN` role. Users cannot self-escalate roles. Mock role switches and dev seeding buttons have been completely eliminated from the production interface.
+- **Server-enforced security**: roles live in `users/{uid}/role` and are enforced by `firebase/database.rules.json` (tested). Self-registration always creates `CITIZEN`; only a city admin can change roles.
 
 ### 2. Live On-Device Android AI Detection (CameraX + ONNX Mobile)
 - **Real-Time Continuous Analysis**: CameraX `ImageAnalysis` analyzer feeds frames directly to the quantized YOLOv8 INT8 model (`10.96 MB`) on a dedicated background executor without blocking the preview stream.
@@ -78,43 +78,53 @@ Tickets transition systematically through:
 
 ---
 
-## 🔑 Pre-Configured Demo Accounts
+## 🔑 Demo Accounts (development only)
 
-Run the development seed script to initialize users and sample reports:
+Defined in `scripts/demo_accounts.json` and created with the Admin SDK (never through client code):
+
 ```bash
-node scripts/seed_demo_accounts.js
+cd scripts && npm install
+npm run seed:emulator                                   # local emulators
+GOOGLE_APPLICATION_CREDENTIALS=key.json npm run seed:prod   # a real project (service account)
 ```
 
-| Role | Name | Email | Password |
+| Role | Username | Email | Where it can sign in |
 |---|---|---|---|
-| **City Corporation (Admin)** | Kamal Hossain (Executive Engineer, DNCC) | `city@pothole.org` | `CityAdmin@2026!` |
-| **Contractor** | M/S Apex Road Infrastructure Ltd. | `contractor@pothole.org` | `Contractor@2026!` |
-| **Citizen** | Rahim Ahmed (Citizen Reporter) | `citizen@pothole.org` | `Citizen@2026!` |
+| City Corporation (admin) | `city_admin` | `city@pothole.org` | Web |
+| Contractor | `contractor_apex` | `contractor@pothole.org` | Web |
+| Citizen / rider | `citizen_rahim` | `citizen@pothole.org` | Web + Android |
+| Citizen / rider 2 | `citizen_karim` | `citizen2@pothole.org` | Web + Android |
+
+Passwords are in `demo_accounts.json` (override with `DEMO_<KEY>_PASSWORD`). One-tap demo login
+appears on the web only with `NEXT_PUBLIC_ENABLE_DEMO_LOGIN=1`, and on Android only in **debug**
+builds (riders only — the Android app is for riders; admins and contractors use the web).
 
 ---
 
 ## 🛠️ Quick Start
 
-### Web Management Dashboard
+### Security rules (deploy these first)
+```bash
+cd firebase/tests && npm install && npm test     # 17 rule tests on the local emulator
+cd .. && firebase deploy --only database          # requires `firebase login`
+firebase deploy --only functions                  # username login; requires the Blaze plan
+```
+
+### Web dashboard
 ```bash
 cd web-dashboard
 npm install --legacy-peer-deps
-npm run build
-npm start
+npm run build && npm start                        # http://localhost:3300
 ```
-Web dashboard runs on `http://localhost:3000` (or `http://localhost:3300`).
+Routes: `/`, `/login`, `/register`, `/citizen`, `/citizen/driver` (simulation only), `/city`, `/contractor`.
 
-### Android Native Application
+### Android app (riders)
 ```bash
 cd android-app
-./gradlew assembleDebug
+./gradlew assembleDebug testDebugUnitTest
 ```
-Output APK: `android-app/app/build/outputs/apk/debug/app-debug.apk`.
 
-### End-to-End Verification Test Suite
-```bash
-python3 ai-model/scripts/e2e_verification_test.py
-```
+See **AUDIT_REPORT.md** for what was fixed, what is tested, and what is still missing.
 
 ---
 

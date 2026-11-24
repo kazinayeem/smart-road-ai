@@ -1,0 +1,23 @@
+<resources>
+    <color name="sp_bg">#0B1220</color>
+    <color name="sp_surface">#131C2E</color>
+    <color name="sp_surface_variant">#1C2740</color>
+    <color name="sp_on_surface">#F1F5F9</color>
+    <color name="sp_on_surface_muted">#A3B1C6</color>
+    <color name="sp_outline">#2C3A55</color>
+    <color name="sp_primary">#FB923C</color>
+    <color name="sp_on_primary">#1C1206</color>
+    <color name="sp_primary_container">#4A1D07</color>
+    <color name="sp_on_primary_container">#FFEDD5</color>
+    <color name="sp_secondary">#22D3EE</color>
+    <color name="sp_on_secondary">#04232B</color>
+    <color name="sp_secondary_container">#0E3A47</color>
+    <color name="sp_danger">#F87171</color>
+    <color name="sp_danger_container">#4C1414</color>
+    <color name="sp_warning">#FBBF24</color>
+    <color name="sp_warning_container">#46300A</color>
+    <color name="sp_success">#4ADE80</color>
+    <color name="sp_success_container">#0E3B21</color>
+    <color name="sp_info">#93C5FD</color>
+    <color name="sp_info_container">#172B55</color>
+</resources>

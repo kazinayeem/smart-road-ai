@@ -1,0 +1,13 @@
+<resources>
+    <dimen name="sp_space_1">4dp</dimen>
+    <dimen name="sp_space_2">8dp</dimen>
+    <dimen name="sp_space_3">12dp</dimen>
+    <dimen name="sp_space_4">16dp</dimen>
+    <dimen name="sp_space_5">24dp</dimen>
+    <dimen name="sp_space_6">32dp</dimen>
+    <dimen name="sp_gutter">16dp</dimen>
+    <dimen name="sp_radius_card">12dp</dimen>
+    <dimen name="sp_radius_sheet">16dp</dimen>
+    <dimen name="sp_touch">48dp</dimen>
+    <dimen name="sp_icon">24dp</dimen>
+</resources>

@@ -40,14 +40,19 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
 
   // Status counters
   const totalCount = reports.length;
-  const newReportsCount = reports.filter((r) => r.status === 'NEW_REPORT').length;
+  // Clients write 'NEW'; older data may say 'NEW_REPORT'. Both mean "new, untriaged".
+  const isNew = (st: string) => st === 'NEW' || st === 'NEW_REPORT';
+  const newReportsCount = reports.filter((r) => isNew(r.status)).length;
   const underReviewCount = reports.filter((r) => r.status === 'UNDER_REVIEW' || r.status === 'VERIFIED').length;
   const inProgressCount = reports.filter((r) => r.status === 'ASSIGNED' || r.status === 'ACCEPTED' || r.status === 'IN_PROGRESS').length;
   const awaitingVerificationCount = reports.filter((r) => r.status === 'REPAIR_SUBMITTED' || r.status === 'CITY_VERIFICATION').length;
   const resolvedCount = reports.filter((r) => r.status === 'RESOLVED').length;
 
   const filteredReports = reports.filter((report) => {
-    if (statusFilter !== 'ALL' && report.status !== statusFilter) return false;
+    if (statusFilter !== 'ALL') {
+      const match = statusFilter === 'NEW_REPORT' ? isNew(report.status) : report.status === statusFilter;
+      if (!match) return false;
+    }
     if (priorityFilter !== 'ALL' && report.priority !== priorityFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -121,7 +126,7 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
           className="flex items-center space-x-2 px-4 py-2.5 bg-white text-blue-800 hover:bg-blue-50 rounded-xl font-semibold text-sm shadow-md transition-all self-start md:self-auto"
         >
           <Sparkles className="h-4 w-4 text-amber-500" />
-          <span>Generate LLM Summary Report</span>
+          <span>Status summary</span>
         </button>
       </div>
 
@@ -270,7 +275,7 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
                         {report.address || 'Road Defect'}
                       </div>
                       <div className="text-xs text-slate-400 font-mono">
-                        {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)} (±{report.gpsAccuracy || 5}m)
+                        {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)} {report.gpsAccuracy ? `(±${Math.round(report.gpsAccuracy)}m)` : '(accuracy unknown)'}
                       </div>
                     </td>
 
@@ -278,7 +283,7 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
                       <div className="flex items-center space-x-2">
                         {getPriorityBadge(report.priority)}
                         <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
-                          {(report.confidence * 100).toFixed(0)}% AI
+                          {report.source === 'LIVE_CAMERA' ? `${(report.confidence * 100).toFixed(0)}% AI` : 'Manual'}
                         </span>
                       </div>
                       {report.areaRatio && (
@@ -333,7 +338,7 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
               <div className="flex items-center space-x-2">
                 <Sparkles className="h-5 w-5 text-amber-500" />
                 <h3 className="text-lg font-bold text-slate-900">
-                  AI-Assisted Municipal Executive Road Report
+                  Status summary (computed from current reports)
                 </h3>
               </div>
               <button
@@ -346,39 +351,33 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
 
             <div className="text-sm text-slate-700 space-y-3 leading-relaxed">
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-800">
-                <strong>Reporting District:</strong> Dhaka Metropolitan Division (North & South Zones) |{' '}
-                <strong>Generated:</strong> {new Date().toLocaleDateString()}
+                <strong>Generated:</strong> {new Date().toLocaleString()} · figures are live counts, not AI estimates
               </div>
 
               <h4 className="font-bold text-slate-800">Executive Summary</h4>
               <p>
-                During the current monitoring period, a total of <strong>{totalCount} road defects</strong> were logged and triaged.
-                Computer vision analysis using the on-device YOLOv8 architecture flagged <strong>{newReportsCount + underReviewCount} unresolved potholes</strong> requiring municipal intervention.
+                <strong>{totalCount}</strong> reports in total; <strong>{newReportsCount}</strong> new and <strong>{underReviewCount}</strong> under review or verified.
               </p>
 
-              <h4 className="font-bold text-slate-800">Severity Breakdown & Risk Assessment</h4>
+              <h4 className="font-bold text-slate-800">Breakdown</h4>
               <ul className="list-disc list-inside space-y-1 text-slate-600 text-xs">
-                <li><strong>Critical Priority:</strong> {reports.filter(r => r.priority === 'CRITICAL').length} defects located on major transit arteries requiring 24h emergency patching.</li>
-                <li><strong>High Priority:</strong> {reports.filter(r => r.priority === 'HIGH').length} defects with heavy vehicle impact risk.</li>
-                <li><strong>Active Maintenance:</strong> {inProgressCount} work orders currently accepted by contracted road infrastructure teams.</li>
-                <li><strong>Resolved & Inspected:</strong> {resolvedCount} repairs certified with before/after photo audit trail.</li>
+                <li><strong>Critical Priority:</strong> {reports.filter(r => r.priority === 'CRITICAL').length} reports</li>
+                <li><strong>High Priority:</strong> {reports.filter(r => r.priority === 'HIGH').length} reports</li>
+                <li><strong>Active Maintenance:</strong> {inProgressCount} assigned / accepted / in progress</li>
+                <li><strong>Resolved & Inspected:</strong> {resolvedCount} resolved</li>
               </ul>
 
-              <h4 className="font-bold text-slate-800">Recommended Allocation</h4>
-              <p className="text-xs text-slate-600">
-                Prioritize Mirpur Section 10 and Gulshan North corridor where defect density is concentrated. Dispatch Apex Infra Works and Delta Highway Engineering to complete outstanding milling and asphalt laying before upcoming monsoon precipitation.
-              </p>
+
             </div>
 
             <div className="flex justify-end space-x-3 pt-3 border-t">
               <button
                 onClick={() => {
-                  alert('Executive report downloaded as PDF!');
-                  setShowAiSummaryModal(false);
+                  window.print();
                 }}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-sm"
               >
-                Export as Official PDF
+                Print / save as PDF
               </button>
               <button
                 onClick={() => setShowAiSummaryModal(false)}

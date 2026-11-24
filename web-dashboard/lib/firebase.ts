@@ -12,7 +12,7 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { getDatabase, ref, get, update, onValue, push, connectDatabaseEmulator } from 'firebase/database';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions';
 import { PotholeReport, UserProfile, Contractor, ActivityLogEntry, UserRole } from '@/types';
 
 // Firebase web config is public by design (it identifies the project; it is not a secret).
@@ -39,6 +39,7 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === '1' && typeof window !== 
     g.__spEmu = true;
     connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
     connectDatabaseEmulator(rtdb, '127.0.0.1', 9000);
+    connectFunctionsEmulator(getFunctions(app), '127.0.0.1', 5001);
   }
 }
 

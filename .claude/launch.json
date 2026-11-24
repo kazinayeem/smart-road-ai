@@ -4,7 +4,7 @@
     {
       "name": "firebase-emulators",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd firebase/tests && npx firebase emulators:start --only auth,database --project cryptro --config ../firebase.json"],
+      "runtimeArgs": ["-c", "cd firebase/tests && npx firebase emulators:start --only auth,database,functions --project cryptro --config ../firebase.json"],
       "port": 9000
     },
     {

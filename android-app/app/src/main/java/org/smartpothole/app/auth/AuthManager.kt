@@ -35,6 +35,8 @@ object AuthManager {
     private const val TAG = "AuthManager"
     private const val PREFS = "smart_pothole_user"
     const val GENERIC_LOGIN_ERROR = "Incorrect username/email or password."
+    const val RIDER_ONLY_ERROR =
+        "This app is for riders. City and contractor accounts use the SmartPothole web dashboard."
     private val USERNAME_RE = Regex("^[A-Za-z0-9_.]{3,20}$")
 
     val VEHICLES = linkedMapOf(
@@ -73,6 +75,11 @@ object AuthManager {
             throw IllegalStateException(GENERIC_LOGIN_ERROR)
         }
         val profile = loadProfile(context)
+        // The mobile app is for riders (CITIZEN accounts) only.
+        if (profile.role != "CITIZEN") {
+            signOut(context)
+            throw IllegalStateException(RIDER_ONLY_ERROR)
+        }
         registerFcmToken()
         return profile
     }

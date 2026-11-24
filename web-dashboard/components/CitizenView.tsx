@@ -100,7 +100,7 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
         confidence: aiConfidence,
         priority: priority,
         source: 'MANUAL_GPS',
-        notes: notes || 'Pothole defect reported with verified GPS location.',
+        notes: notes || '',
       });
 
       setSubmitSuccess(true);
@@ -130,7 +130,7 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
         confidence: 1,
         priority: 'HIGH',
         source: 'MANUAL_GPS',
-        notes: 'Quick mark logged instantly via GPS one-click report.',
+        notes: 'Quick mark at device GPS position.',
       });
       setSubmitSuccess(true);
       setTimeout(() => setSubmitSuccess(false), 4000);
@@ -335,7 +335,7 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
                         {rep.address}
                       </p>
                       <p className="text-[10px] font-mono text-slate-500 mt-0.5">
-                        Lat: {rep.latitude.toFixed(4)}, Lng: {rep.longitude.toFixed(4)} • AI: {(rep.confidence * 100).toFixed(0)}%
+                        Lat: {rep.latitude.toFixed(4)}, Lng: {rep.longitude.toFixed(4)} • {rep.source === 'LIVE_CAMERA' ? `AI: ${(rep.confidence * 100).toFixed(0)}%` : 'Manual report'}
                       </p>
                     </div>
 

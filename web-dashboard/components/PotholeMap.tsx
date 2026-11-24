@@ -4,6 +4,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PotholeReport } from '@/types';
 import { Navigation, Crosshair, Plus, ShieldAlert, Sparkles } from 'lucide-react';
 
+// Filter chips and their counters use the same status groups.
+const FILTER_GROUPS: Record<string, string[]> = {
+  NEW_REPORT: ['NEW', 'NEW_REPORT', 'UNDER_REVIEW'],
+  IN_PROGRESS: ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS', 'REPAIR_SUBMITTED', 'CITY_VERIFICATION'],
+  RESOLVED: ['RESOLVED'],
+};
+
 interface PotholeMapProps {
   reports: PotholeReport[];
   selectedReport: PotholeReport | null;
@@ -164,14 +171,14 @@ export const PotholeMap: React.FC<PotholeMapProps> = ({
 
       const displayedReports = activeFilter === 'ALL'
         ? reports
-        : reports.filter((r) => r.status === activeFilter);
+        : reports.filter((r) => FILTER_GROUPS[activeFilter]?.includes(r.status) ?? r.status === activeFilter);
 
       displayedReports.forEach((report) => {
         if (!report.latitude || !report.longitude) return;
 
         const color = getMarkerColor(report.status);
         const isSelected = selectedReport?.id === report.id;
-        const isCritical = report.priority === 'CRITICAL' && (report.status === 'NEW_REPORT' || report.status === 'UNDER_REVIEW');
+        const isCritical = report.priority === 'CRITICAL' && (report.status === 'NEW' || report.status === 'NEW_REPORT' || report.status === 'UNDER_REVIEW');
 
         const customHtml = `
           <div style="position: relative; width: 30px; height: 30px;">
@@ -260,8 +267,8 @@ export const PotholeMap: React.FC<PotholeMapProps> = ({
     }
   }, [resetViewTrigger]);
 
-  const unresolvedCount = reports.filter(r => r.status === 'NEW_REPORT' || r.status === 'UNDER_REVIEW').length;
-  const inProgressCount = reports.filter(r => r.status === 'ASSIGNED' || r.status === 'IN_PROGRESS').length;
+  const unresolvedCount = reports.filter(r => r.status === 'NEW' || r.status === 'NEW_REPORT' || r.status === 'UNDER_REVIEW').length;
+  const inProgressCount = reports.filter(r => FILTER_GROUPS.IN_PROGRESS.includes(r.status)).length;
   const resolvedCount = reports.filter(r => r.status === 'RESOLVED').length;
 
   return (
