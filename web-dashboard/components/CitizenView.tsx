@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 interface CitizenViewProps {
+  currentUserId: string;
   reports: PotholeReport[];
   selectedReport: PotholeReport | null;
   onSelectReport: (report: PotholeReport) => void;
@@ -26,17 +27,22 @@ interface CitizenViewProps {
 }
 
 export const CitizenView: React.FC<CitizenViewProps> = ({
+  currentUserId,
   reports,
   selectedReport,
   onSelectReport,
   presetGps,
 }) => {
-  const [address, setAddress] = useState('Mirpur Road, Near Asad Gate, Dhaka');
-  const [latitude, setLatitude] = useState(presetGps?.lat || 23.7628);
-  const [longitude, setLongitude] = useState(presetGps?.lng || 90.3705);
+  // No pre-filled fake location: the user must use GPS, pick on the map, or type coordinates.
+  const [address, setAddress] = useState('');
+  const [latitude, setLatitude] = useState(presetGps?.lat ?? 0);
+  const [longitude, setLongitude] = useState(presetGps?.lng ?? 0);
+  const [gpsAccuracy, setGpsAccuracy] = useState(0);
+  const [formError, setFormError] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [priority, setPriority] = useState<PriorityLevel>('HIGH');
-  const [aiConfidence, setAiConfidence] = useState(0.94);
+  // Manual reports are human observations, not model output.
+  const aiConfidence = 1;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [isLiveGpsActive, setIsLiveGpsActive] = useState(false);
@@ -59,11 +65,12 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
           const lng = Number(pos.coords.longitude.toFixed(6));
           setLatitude(lat);
           setLongitude(lng);
-          setAddress(`Live Device Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
+          setGpsAccuracy(Math.round(pos.coords.accuracy));
+          setAddress(`Device location (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
           setIsLiveGpsActive(false);
         },
         (err) => {
-          console.warn('GPS error:', err);
+          setFormError(err.code === err.PERMISSION_DENIED ? 'Location permission was denied. Enter coordinates or pick a point on the map.' : 'Could not get your location. Try again or pick a point on the map.');
           setIsLiveGpsActive(false);
         },
         { enableHighAccuracy: true, timeout: 8000 }
@@ -72,15 +79,24 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
   };
 
   // Submit Structured Metadata Report (Zero Image Upload)
+  const hasValidLocation = () =>
+    Number.isFinite(latitude) && Number.isFinite(longitude) &&
+    Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180 && !(latitude === 0 && longitude === 0);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+    if (!hasValidLocation()) {
+      setFormError('Set the pothole location first: use GPS, click the map, or enter coordinates.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       await submitPotholeReport({
         address: address,
         latitude: latitude,
         longitude: longitude,
-        gpsAccuracy: 5.2,
+        gpsAccuracy,
         confidence: aiConfidence,
         priority: priority,
         source: 'MANUAL_GPS',
@@ -91,7 +107,7 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
       setTimeout(() => setSubmitSuccess(false), 4000);
       setNotes('');
     } catch (err) {
-      console.error('Submission failed:', err);
+      setFormError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -99,14 +115,19 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
 
   // Instant 1-Click Mark at Current Location
   const handleInstantMark = async () => {
+    setFormError(null);
+    if (!hasValidLocation()) {
+      setFormError('Get your GPS location first (button above), then mark.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       await submitPotholeReport({
         address: address || `Road Hazard at (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
         latitude: latitude,
         longitude: longitude,
-        gpsAccuracy: 4.8,
-        confidence: 0.92,
+        gpsAccuracy,
+        confidence: 1,
         priority: 'HIGH',
         source: 'MANUAL_GPS',
         notes: 'Quick mark logged instantly via GPS one-click report.',
@@ -114,7 +135,7 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
       setSubmitSuccess(true);
       setTimeout(() => setSubmitSuccess(false), 4000);
     } catch (err) {
-      console.error(err);
+      setFormError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -168,10 +189,16 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
             </button>
           </div>
 
+          {formError && (
+            <div role="alert" className="p-3.5 bg-red-50 text-red-800 rounded-2xl border border-red-200 text-xs font-semibold">
+              {formError}
+            </div>
+          )}
+
           {submitSuccess && (
             <div className="p-3.5 bg-emerald-50 text-emerald-800 rounded-2xl border border-emerald-200 flex items-center space-x-2 text-xs font-semibold animate-in fade-in duration-300">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>Pothole marked successfully! Pinned to municipal triage queue in real-time.</span>
+              <span>Report submitted. It is now in the city's review queue.</span>
             </div>
           )}
 
@@ -212,34 +239,6 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
                   required
                   className="w-full p-2 border border-slate-300 rounded-xl text-xs font-mono"
                 />
-              </div>
-            </div>
-
-            {/* Edge AI Telemetry Badge */}
-            <div className="p-4 bg-slate-900 rounded-2xl border border-slate-800 text-white space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Cpu className="h-4 w-4 text-emerald-400" />
-                  <span className="text-xs font-bold text-slate-200">On-Device Edge AI Detection</span>
-                </div>
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
-                  Zero Camera Upload
-                </span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 text-xs font-mono text-center">
-                <div className="bg-slate-800 p-2 rounded-xl">
-                  <span className="text-slate-400 text-[10px] block">Confidence</span>
-                  <span className="text-emerald-400 font-bold">{(aiConfidence * 100).toFixed(0)}%</span>
-                </div>
-                <div className="bg-slate-800 p-2 rounded-xl">
-                  <span className="text-slate-400 text-[10px] block">Target</span>
-                  <span className="text-blue-400 font-bold">Pothole</span>
-                </div>
-                <div className="bg-slate-800 p-2 rounded-xl">
-                  <span className="text-slate-400 text-[10px] block">Inference</span>
-                  <span className="text-amber-400 font-bold">47 ms</span>
-                </div>
               </div>
             </div>
 
