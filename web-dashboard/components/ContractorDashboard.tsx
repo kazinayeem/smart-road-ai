@@ -17,12 +17,16 @@ import {
 } from 'lucide-react';
 
 interface ContractorDashboardProps {
+  currentUserId: string;
+  companyName: string;
   reports: PotholeReport[];
   selectedReport: PotholeReport | null;
   onSelectReport: (report: PotholeReport) => void;
 }
 
 export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
+  currentUserId,
+  companyName,
   reports,
   selectedReport,
   onSelectReport,
@@ -37,10 +41,9 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
   const [repairNotes, setRepairNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Contractor tasks (assigned to Apex Infra Works or contractor_demo_uid)
-  const myTasks = reports.filter(
-    (r) => r.contractorId === 'contractor_demo_uid' || r.assignedTo?.includes('Apex') || r.status === 'ASSIGNED' || r.status === 'ACCEPTED' || r.status === 'IN_PROGRESS' || r.status === 'REPAIR_SUBMITTED'
-  );
+  // Only work orders assigned to THIS contractor account (previously every assigned report leaked in).
+  const [actionError, setActionError] = useState<string | null>(null);
+  const myTasks = reports.filter((r) => r.contractorId === currentUserId);
 
   const pendingAcceptance = myTasks.filter((r) => r.status === 'ASSIGNED');
   const activeRepairs = myTasks.filter((r) => r.status === 'ACCEPTED' || r.status === 'IN_PROGRESS');
@@ -52,11 +55,10 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
       await updateReportWorkflow(
         report.id,
         { status: 'ACCEPTED' },
-        'Apex Infra Works (Contractor)',
         'Assignment officially accepted by contractor dispatch team.'
       );
     } catch (e) {
-      console.error(e);
+      setActionError(e instanceof Error ? e.message : 'Action failed. You may not have permission for this step.');
     } finally {
       setIsSubmitting(false);
     }
@@ -73,13 +75,12 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
           contractorId: null,
           assignedTo: null
         },
-        'Apex Infra Works (Contractor)',
         `Assignment declined: ${declineReason}`
       );
       setShowDeclineModal(false);
       setDeclineReason('');
     } catch (e) {
-      console.error(e);
+      setActionError(e instanceof Error ? e.message : 'Action failed. You may not have permission for this step.');
     } finally {
       setIsSubmitting(false);
     }
@@ -91,11 +92,10 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
       await updateReportWorkflow(
         report.id,
         { status: 'IN_PROGRESS' },
-        'Apex Infra Works (Contractor)',
         'Maintenance crew on site. Asphalt cutting and leveling in progress.'
       );
     } catch (e) {
-      console.error(e);
+      setActionError(e instanceof Error ? e.message : 'Action failed. You may not have permission for this step.');
     } finally {
       setIsSubmitting(false);
     }
@@ -113,13 +113,12 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
           repairAfterImage: afterImage,
           repairNotes: repairNotes || 'Road patch compacted and sealed according to municipal civil standards.'
         },
-        'Apex Infra Works (Contractor)',
         'Completed repair evidence submitted for City Corporation audit and approval.'
       );
       setShowEvidenceModal(false);
       setRepairNotes('');
     } catch (e) {
-      console.error(e);
+      setActionError(e instanceof Error ? e.message : 'Action failed. You may not have permission for this step.');
     } finally {
       setIsSubmitting(false);
     }
@@ -127,6 +126,12 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
 
   return (
     <div className="space-y-6">
+      {actionError && (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800 flex justify-between gap-3">
+          <span>{actionError}</span>
+          <button type="button" className="font-medium underline" onClick={() => setActionError(null)}>Dismiss</button>
+        </div>
+      )}
       {/* Contractor Banner */}
       <div className="bg-gradient-to-r from-amber-700 via-amber-800 to-orange-900 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -134,7 +139,7 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/30 text-amber-100 border border-amber-400/30">
               Contractor Operations Desk
             </span>
-            <span className="text-xs text-amber-200">Apex Road Infrastructure Ltd. (DNCC License #A-8841)</span>
+            <span className="text-xs text-amber-200">{companyName}</span>
           </div>
           <h1 className="text-2xl font-bold mt-1 tracking-tight">Assigned Pavement Maintenance Orders</h1>
           <p className="text-sm text-amber-200 mt-1 max-w-2xl">
@@ -334,7 +339,7 @@ export const ContractorDashboard: React.FC<ContractorDashboardProps> = ({
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-slate-900">Decline Work Order</h3>
             <p className="text-xs text-slate-500">
-              Please state why Apex Infra Works is declining work order <strong>{actionReport.id}</strong>:
+              Please state why you are declining work order <strong>{actionReport.id}</strong>:
             </p>
             <textarea
               value={declineReason}

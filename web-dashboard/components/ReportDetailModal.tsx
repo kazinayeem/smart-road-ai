@@ -52,8 +52,11 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
     };
   }, [report.id, report.status]);
 
+  const [updateError, setUpdateError] = useState<string | null>(null);
+
   const handleUpdateStatus = async (newStatus: ReportStatus, customRemarks?: string) => {
     setIsUpdating(true);
+    setUpdateError(null);
     try {
       const extraUpdates: Partial<PotholeReport> = {
         status: newStatus,
@@ -70,7 +73,6 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
       await updateReportWorkflow(
         report.id,
         extraUpdates,
-        'City Corporation Admin (Kamal Hossain)',
         customRemarks || remarks || `Status transitioned to ${newStatus}`
       );
 
@@ -80,7 +82,7 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
       setLogs(updatedLogs);
       setRemarks('');
     } catch (err) {
-      console.error('Update error:', err);
+      setUpdateError(err instanceof Error ? err.message : 'Update failed. You may not have permission for this transition.');
     } finally {
       setIsUpdating(false);
     }
@@ -107,7 +109,10 @@ export const ReportDetailModal: React.FC<ReportDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div role="dialog" aria-modal="true" className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+        {updateError && (
+          <div role="alert" className="bg-red-50 border-b border-red-200 px-6 py-3 text-sm text-red-800">{updateError}</div>
+        )}
         {/* Header */}
         <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center space-x-3">
