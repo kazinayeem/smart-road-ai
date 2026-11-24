@@ -1,377 +1,183 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { UserProfile } from '@/types';
-import { loginWithEmail, registerCitizen, DEMO_CREDENTIALS } from '@/lib/firebase';
-import {
-  Shield,
-  Lock,
-  Mail,
-  User,
-  Phone,
-  ArrowRight,
-  Building2,
-  HardHat,
-  AlertCircle,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Key
-} from 'lucide-react';
+import { login, registerCitizen, requestPasswordReset } from '@/lib/firebase';
+import { Shield, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+
+const VEHICLES: Record<string, string> = {
+  MOTORCYCLE: 'Motorcycle / Bike',
+  CAR: 'Car',
+  BICYCLE: 'Bicycle',
+  CNG: 'CNG / Auto-rickshaw',
+  BUS: 'Bus',
+  TRUCK: 'Truck',
+  WALKING: 'Walking',
+};
 
 interface AuthScreenProps {
+  mode: 'LOGIN' | 'REGISTER';
   onLoginSuccess: (user: UserProfile) => void;
 }
 
-export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
-  const [activeTab, setActiveTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
+const inputCls =
+  'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20';
+const labelCls = 'block text-sm font-medium text-slate-700 mb-1.5';
 
-  // Login form state
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-
-  // Register form state
-  const [regName, setRegName] = useState('');
-  const [regEmail, setRegEmail] = useState('');
-  const [regPhone, setRegPhone] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-
+export const AuthScreen: React.FC<AuthScreenProps> = ({ mode, onLoginSuccess }) => {
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [vehicle, setVehicle] = useState('MOTORCYCLE');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showDemoCredentials, setShowDemoCredentials] = useState(false);
+  const [info, setInfo] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loginEmail || !loginPassword) {
-      setError('Please provide both email and password.');
+    setError(null);
+    setInfo(null);
+    if (mode === 'LOGIN' && (!identifier || !password)) {
+      setError('Enter your username or email and your password.');
       return;
     }
     setIsLoading(true);
-    setError(null);
     try {
-      const user = await loginWithEmail(loginEmail, loginPassword);
+      const user =
+        mode === 'LOGIN'
+          ? await login(identifier, password)
+          : await registerCitizen({ name, username, email, phone, password, vehicleType: vehicle });
       onLoginSuccess(user);
-    } catch (err: any) {
-      setError(err?.message || 'Authentication failed. Please verify your credentials.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!regName || !regEmail || !regPassword) {
-      setError('Please fill in all required fields.');
+  const forgot = async () => {
+    const target = identifier.includes('@') ? identifier : email;
+    if (!target.includes('@')) {
+      setError('Enter the email address on your account in the field above, then choose “Forgot password”.');
       return;
     }
-    setIsLoading(true);
-    setError(null);
-    try {
-      const user = await registerCitizen(regName, regEmail, regPhone, regPassword);
-      onLoginSuccess(user);
-    } catch (err: any) {
-      setError(err?.message || 'Registration failed. Please check your information.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSelectDemoAccount = (email: string) => {
-    setLoginEmail(email);
-    setLoginPassword('DemoPassword123!');
-    setActiveTab('LOGIN');
-    setError(null);
+    await requestPasswordReset(target);
+    setInfo('If an account exists for that email, a reset link is on its way.');
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8">
-      {/* Background accents */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative max-w-md w-full space-y-6">
-        {/* Branding Header */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex h-14 w-14 rounded-2xl bg-blue-600 text-white items-center justify-center shadow-lg shadow-blue-500/20">
-            <Shield className="h-8 w-8" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              SmartPothole AI
-            </h1>
-            <p className="text-sm text-slate-400 mt-1">
-              Civic Road Maintenance &amp; Defect Management Platform
-            </p>
-          </div>
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4 py-10">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center space-y-2">
+          <Link href="/" className="inline-flex h-12 w-12 rounded-2xl bg-blue-600 text-white items-center justify-center" aria-label="SmartPothole AI home">
+            <Shield className="h-7 w-7" aria-hidden />
+          </Link>
+          <h1 className="text-2xl font-bold text-slate-900">
+            {mode === 'LOGIN' ? 'Sign in to SmartPothole AI' : 'Create your account'}
+          </h1>
+          <p className="text-sm text-slate-600">
+            {mode === 'LOGIN'
+              ? 'Use your username or email.'
+              : 'New accounts are citizen accounts. City and contractor roles are granted by an administrator.'}
+          </p>
         </div>
 
-        {/* Card Container */}
-        <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
-          {/* Tabs */}
-          <div className="grid grid-cols-2 border-b border-slate-100 bg-slate-50/70 p-1.5 m-2 rounded-2xl">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('LOGIN');
-                setError(null);
-              }}
-              className={`py-2.5 text-xs font-bold rounded-xl transition-all ${
-                activeTab === 'LOGIN'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('REGISTER');
-                setError(null);
-              }}
-              className={`py-2.5 text-xs font-bold rounded-xl transition-all ${
-                activeTab === 'REGISTER'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              Register Citizen
-            </button>
-          </div>
-
-          <div className="p-6 pt-4 space-y-5">
-            {error && (
-              <div className="p-3 bg-red-50 text-red-800 rounded-xl border border-red-200 text-xs flex items-center space-x-2 animate-in fade-in">
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
-                <span>{error}</span>
+        <form onSubmit={submit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4" noValidate>
+          {mode === 'REGISTER' ? (
+            <>
+              <div>
+                <label htmlFor="name" className={labelCls}>Full name</label>
+                <input id="name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required />
               </div>
-            )}
-
-            {activeTab === 'LOGIN' ? (
-              /* LOGIN FORM */
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Account Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      type="email"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="name@pothole.org"
-                      required
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+              <div>
+                <label htmlFor="username" className={labelCls}>Username</label>
+                <input id="username" className={inputCls} value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" aria-describedby="username-help" required />
+                <p id="username-help" className="mt-1 text-xs text-slate-500">3–20 letters, digits, “_” or “.”. Not case-sensitive.</p>
+              </div>
+              <div>
+                <label htmlFor="email" className={labelCls}>Email (for password recovery)</label>
+                <input id="email" type="email" className={inputCls} value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
+              </div>
+              <div>
+                <label htmlFor="phone" className={labelCls}>Phone (optional)</label>
+                <input id="phone" type="tel" className={inputCls} value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+              </div>
+              <fieldset>
+                <legend className={labelCls}>Vehicle</legend>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(VEHICLES).map(([key, label]) => (
+                    <label
+                      key={key}
+                      className={`flex min-h-[44px] cursor-pointer items-center rounded-xl border px-3 text-sm ${
+                        vehicle === key ? 'border-blue-600 bg-blue-50 text-blue-800 font-medium' : 'border-slate-300 text-slate-700'
+                      }`}
+                    >
+                      <input type="radio" name="vehicle" value={key} checked={vehicle === key} onChange={() => setVehicle(key)} className="sr-only" />
+                      {label}
+                    </label>
+                  ))}
                 </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      type="password"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      required
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <span>Authenticating...</span>
-                  ) : (
-                    <>
-                      <span>Sign In to Dashboard</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-              </form>
-            ) : (
-              /* REGISTER CITIZEN FORM */
-              <form onSubmit={handleRegister} className="space-y-3.5">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      value={regName}
-                      onChange={(e) => setRegName(e.target.value)}
-                      placeholder="Rahim Ahmed"
-                      required
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      type="email"
-                      value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="citizen@domain.com"
-                      required
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Phone Number (Optional)
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      type="tel"
-                      value={regPhone}
-                      onChange={(e) => setRegPhone(e.target.value)}
-                      placeholder="+88017XXXXXXXX"
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <input
-                      type="password"
-                      value={regPassword}
-                      onChange={(e) => setRegPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      required
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-slate-500">
-                  Registered accounts are granted <strong>CITIZEN</strong> role. Administrative roles are provisioned exclusively by municipal authorities.
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  {isLoading ? <span>Registering...</span> : <span>Create Citizen Account</span>}
-                </button>
-              </form>
-            )}
-
-            {/* Development / Evaluator Credentials Quick-Fill Guide */}
-            <div className="border-t border-slate-100 pt-3">
-              <button
-                type="button"
-                onClick={() => setShowDemoCredentials(!showDemoCredentials)}
-                className="w-full flex items-center justify-between text-[11px] font-semibold text-slate-500 hover:text-slate-800"
-              >
-                <div className="flex items-center space-x-1.5">
-                  <Key className="h-3.5 w-3.5 text-blue-600" />
-                  <span>Evaluation &amp; Predefined Demo Accounts</span>
-                </div>
-                {showDemoCredentials ? (
-                  <ChevronUp className="h-3.5 w-3.5" />
-                ) : (
-                  <ChevronDown className="h-3.5 w-3.5" />
-                )}
-              </button>
-
-              {showDemoCredentials && (
-                <div className="mt-2.5 space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200/80 text-[11px]">
-                  <p className="text-slate-500 text-[10px]">
-                    Click any seeded account below to populate credentials:
-                  </p>
-
-                  {/* City Corporation */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectDemoAccount(DEMO_CREDENTIALS.CITY_CORPORATION.email)}
-                    className="w-full text-left p-2 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-colors flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="font-bold text-slate-800 flex items-center space-x-1">
-                        <Building2 className="h-3 w-3 text-blue-600" />
-                        <span>City Corporation Administrator</span>
-                      </div>
-                      <div className="text-slate-500 font-mono text-[10px]">
-                        {DEMO_CREDENTIALS.CITY_CORPORATION.email}
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-blue-600">Select</span>
-                  </button>
-
-                  {/* Contractor */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectDemoAccount(DEMO_CREDENTIALS.CONTRACTOR.email)}
-                    className="w-full text-left p-2 rounded-xl bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 transition-colors flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="font-bold text-slate-800 flex items-center space-x-1">
-                        <HardHat className="h-3 w-3 text-amber-600" />
-                        <span>Road Maintenance Contractor</span>
-                      </div>
-                      <div className="text-slate-500 font-mono text-[10px]">
-                        {DEMO_CREDENTIALS.CONTRACTOR.email}
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-amber-600">Select</span>
-                  </button>
-
-                  {/* Citizen */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectDemoAccount(DEMO_CREDENTIALS.CITIZEN.email)}
-                    className="w-full text-left p-2 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 transition-colors flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="font-bold text-slate-800 flex items-center space-x-1">
-                        <User className="h-3 w-3 text-emerald-600" />
-                        <span>Citizen Reporter</span>
-                      </div>
-                      <div className="text-slate-500 font-mono text-[10px]">
-                        {DEMO_CREDENTIALS.CITIZEN.email}
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-600">Select</span>
-                  </button>
-                </div>
-              )}
+              </fieldset>
+            </>
+          ) : (
+            <div>
+              <label htmlFor="identifier" className={labelCls}>Username or email</label>
+              <input id="identifier" className={inputCls} value={identifier} onChange={(e) => setIdentifier(e.target.value)} autoComplete="username" required />
             </div>
-          </div>
-        </div>
+          )}
 
-        {/* Security Notice */}
-        <div className="text-center text-[11px] text-slate-500">
-          Strict role-based access enforced by Firebase security rules. Guest access disabled.
-        </div>
+          <div>
+            <label htmlFor="password" className={labelCls}>Password</label>
+            <input
+              id="password"
+              type="password"
+              className={inputCls}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete={mode === 'LOGIN' ? 'current-password' : 'new-password'}
+              minLength={mode === 'REGISTER' ? 8 : undefined}
+              required
+            />
+          </div>
+
+          {error && (
+            <div role="alert" className="flex gap-2 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-800">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" aria-hidden /> <span>{error}</span>
+            </div>
+          )}
+          {info && (
+            <div role="status" className="flex gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800">
+              <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" aria-hidden /> <span>{info}</span>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full min-h-[44px] rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 inline-flex items-center justify-center gap-2"
+          >
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+            {mode === 'LOGIN' ? 'Sign in' : 'Create account'}
+          </button>
+
+          {mode === 'LOGIN' && (
+            <button type="button" onClick={forgot} className="w-full min-h-[44px] text-sm text-blue-700 hover:underline">
+              Forgot password?
+            </button>
+          )}
+        </form>
+
+        <p className="text-center text-sm text-slate-600">
+          {mode === 'LOGIN' ? (
+            <>New here? <Link href="/register" className="font-medium text-blue-700 hover:underline">Create an account</Link></>
+          ) : (
+            <>Already registered? <Link href="/login" className="font-medium text-blue-700 hover:underline">Sign in</Link></>
+          )}
+        </p>
       </div>
     </div>
   );

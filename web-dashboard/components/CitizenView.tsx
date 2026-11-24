@@ -77,19 +77,13 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
     setIsSubmitting(true);
     try {
       await submitPotholeReport({
-        reportId: `PTH-${Math.floor(100 + Math.random() * 900)}`,
-        reporterId: 'citizen_demo_uid',
-        reporterName: 'Rahim Ahmed (Citizen)',
         address: address,
         latitude: latitude,
         longitude: longitude,
         gpsAccuracy: 5.2,
-        detectionClass: 'pothole',
         confidence: aiConfidence,
         priority: priority,
-        status: 'NEW',
-        source: 'MOBILE_APP',
-        contractorId: null,
+        source: 'MANUAL_GPS',
         notes: notes || 'Pothole defect reported with verified GPS location.',
       });
 
@@ -108,19 +102,13 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
     setIsSubmitting(true);
     try {
       await submitPotholeReport({
-        reportId: `PTH-${Math.floor(100 + Math.random() * 900)}`,
-        reporterId: 'citizen_demo_uid',
-        reporterName: 'Rahim Ahmed (Quick Mark)',
         address: address || `Road Hazard at (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
         latitude: latitude,
         longitude: longitude,
         gpsAccuracy: 4.8,
-        detectionClass: 'pothole',
         confidence: 0.92,
         priority: 'HIGH',
-        status: 'NEW',
         source: 'MANUAL_GPS',
-        contractorId: null,
         notes: 'Quick mark logged instantly via GPS one-click report.',
       });
       setSubmitSuccess(true);
@@ -132,12 +120,7 @@ export const CitizenView: React.FC<CitizenViewProps> = ({
     }
   };
 
-  const mySubmissions = reports.filter(
-    (r) =>
-      r.reporterId === 'citizen_demo_uid' ||
-      r.reporterName?.includes('Rahim') ||
-      r.reporterName?.includes('Citizen')
-  );
+  const mySubmissions = reports.filter((r) => r.reporterId === currentUserId);
 
   return (
     <div className="space-y-6">
