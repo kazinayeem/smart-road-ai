@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // STATIC_EXPORT=1 builds a static site into ./out for Firebase Hosting (every page is client-rendered;
+  // access control lives in the database security rules, not on a server).
+  ...(process.env.STATIC_EXPORT === '1' ? { output: 'export', trailingSlash: false } : {}),
   // Always inline these flags (unset vars are otherwise left as runtime lookups, which would keep
   // the demo-credentials module in the production bundle).
   env: {

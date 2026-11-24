@@ -32,3 +32,6 @@ firebase/tests/node_modules/
 
 # OS
 .DS_Store
+web-dashboard/.next-export/
+firebase/public/
+firebase/.firebase/

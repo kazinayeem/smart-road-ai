@@ -9,7 +9,9 @@
     "lint": "next lint",
     "seed": "npm --prefix ../scripts run seed:emulator",
     "seed:prod": "npm --prefix ../scripts run seed:prod",
-    "seed:emulator": "npm --prefix ../scripts run seed:emulator"
+    "seed:emulator": "npm --prefix ../scripts run seed:emulator",
+    "build:hosting": "STATIC_EXPORT=1 NEXT_DIST_DIR=.next-export NEXT_PUBLIC_ENABLE_DEMO_LOGIN=0 NEXT_PUBLIC_USE_FIREBASE_EMULATORS=0 next build && rm -rf ../firebase/public && cp -R .next-export ../firebase/public",
+    "build:hosting:demo": "STATIC_EXPORT=1 NEXT_DIST_DIR=.next-export NEXT_PUBLIC_ENABLE_DEMO_LOGIN=1 NEXT_PUBLIC_USE_FIREBASE_EMULATORS=0 next build && rm -rf ../firebase/public && cp -R .next-export ../firebase/public"
   },
   "dependencies": {
     "firebase": "^11.3.1",
