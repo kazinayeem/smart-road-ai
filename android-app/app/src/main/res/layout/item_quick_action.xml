@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:minHeight="96dp"
+        android:orientation="vertical"
+        android:padding="@dimen/sp_space_3">
+
+        <ImageView
+            android:id="@+id/qaIcon"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_icon_secondary"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_split"
+            app:tint="@color/sp_secondary" />
+
+        <TextView
+            android:id="@+id/qaLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="Split mode"
+            android:textAppearance="@style/SP.Text.Label" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

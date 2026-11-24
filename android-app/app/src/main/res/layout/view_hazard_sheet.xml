@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet"
+    android:elevation="12dp"
+    android:orientation="vertical"
+    android:padding="@dimen/sp_space_4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/sheetTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:accessibilityHeading="true"
+            android:text="Pothole"
+            android:textAppearance="@style/SP.Text.Title" />
+
+        <TextView
+            android:id="@+id/sheetSeverity"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_chip_danger"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:text="High"
+            android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+
+        <ImageButton
+            android:id="@+id/sheetClose"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close details"
+            android:src="@drawable/ic_close"
+            app:tint="@color/sp_on_surface_muted" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/sheetDetected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sp_space_2"
+        android:text="Detected 24 Nov 2026, 16:12:05"
+        android:textAppearance="@style/SP.Text.Body" />
+
+    <TextView
+        android:id="@+id/sheetMeta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="New · seen 2 times · 140 m away"
+        android:textAppearance="@style/SP.Text.Muted" />
+
+    <TextView
+        android:id="@+id/sheetCoords"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="23.80690, 90.36870"
+        android:textAppearance="@style/SP.Text.Caption" />
+</LinearLayout>

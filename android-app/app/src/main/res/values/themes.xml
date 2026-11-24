@@ -72,4 +72,32 @@
         <item name="android:textColor">@color/sp_on_surface</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="SP.NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/sp_primary_container</item>
+    </style>
+    <style name="SP.MapFab" parent="Widget.Material3.FloatingActionButton.Small.Surface">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/sp_surface</item>
+        <item name="tint">@color/sp_on_surface</item>
+        <item name="fabCustomSize">48dp</item>
+    </style>
+    <!-- Compact control on dark camera HUDs: icon above label, 64dp tall, high contrast. -->
+    <style name="SP.HudButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="iconGravity">top</item>
+        <item name="iconPadding">2dp</item>
+        <item name="iconSize">22dp</item>
+        <item name="iconTint">@color/sp_on_hud</item>
+        <item name="android:textColor">@color/sp_on_hud</item>
+        <item name="backgroundTint">#33FFFFFF</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
 </resources>

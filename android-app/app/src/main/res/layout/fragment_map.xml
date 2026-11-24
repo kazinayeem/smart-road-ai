@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="Live road map with reported potholes" />
+
+    <!-- Navigation-style banner: nearest hazard ahead -->
+    <include
+        android:id="@+id/hazardBanner"
+        layout="@layout/view_hazard_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp" />
+
+    <!-- Right-side controls -->
+    <LinearLayout
+        android:id="@+id/mapControls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabOrientation"
+            style="@style/SP.MapFab"
+            android:contentDescription="Heading up. Tap for north up."
+            android:src="@drawable/ic_navigation" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabZoomIn"
+            style="@style/SP.MapFab"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Zoom in"
+            android:src="@drawable/ic_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabZoomOut"
+            style="@style/SP.MapFab"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Zoom out"
+            android:src="@drawable/ic_remove" />
+    </LinearLayout>
+
+    <!-- Bottom HUD -->
+    <LinearLayout
+        android:id="@+id/mapBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:id="@+id/speedPill"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_pill_surface"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="–"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:textColor="@color/sp_on_surface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="km/h"
+                android:textAppearance="@style/SP.Text.Caption" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMapStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_pill_surface"
+            android:elevation="6dp"
+            android:maxLines="2"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="Waiting for GPS…"
+            android:textAppearance="@style/SP.Text.Label" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fabRecenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Recenter"
+            android:visibility="gone"
+            app:backgroundTint="@color/sp_secondary"
+            app:icon="@drawable/ic_my_location"
+            app:iconTint="@color/sp_on_secondary"
+            android:textColor="@color/sp_on_secondary" />
+    </LinearLayout>
+
+    <!-- Hazard details sheet -->
+    <include
+        android:id="@+id/hazardSheet"
+        layout="@layout/view_hazard_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone" />
+</FrameLayout>

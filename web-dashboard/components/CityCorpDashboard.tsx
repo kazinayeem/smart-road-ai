@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 interface CityCorpDashboardProps {
+  changedIds?: Set<string>;
   reports: PotholeReport[];
   contractors: Contractor[];
   selectedReport: PotholeReport | null;
@@ -27,6 +28,7 @@ interface CityCorpDashboardProps {
 }
 
 export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
+  changedIds,
   reports,
   contractors,
   selectedReport,
@@ -253,7 +255,7 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
                     key={report.id}
                     onClick={() => onSelectReport(report)}
                     className={`hover:bg-slate-50 cursor-pointer transition-colors ${
-                      selectedReport?.id === report.id ? 'bg-blue-50/60' : ''
+                      changedIds?.has(report.id) ? 'bg-amber-50 ring-2 ring-inset ring-amber-400' : selectedReport?.id === report.id ? 'bg-blue-50/60' : ''
                     }`}
                   >
                     <td className="px-6 py-4">
@@ -264,8 +266,13 @@ export const CityCorpDashboard: React.FC<CityCorpDashboardProps> = ({
                         <div>
                           <div className="font-semibold text-slate-900">{report.reportId || report.id}</div>
                           <div className="text-xs text-slate-500">
-                            By {report.reporterName || 'Citizen'} • {new Date(report.createdAt).toLocaleDateString()}
+                            By {report.reporterName || 'Citizen'} • detected {new Date(report.firstDetectedAt || report.createdAt).toLocaleString()}
                           </div>
+                          {(report.totalDetections || 1) > 1 && (
+                            <div className="text-xs font-medium text-orange-700">
+                              Seen {report.totalDetections}× · last {new Date(report.lastDetectedAt || report.updatedAt).toLocaleString()}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>

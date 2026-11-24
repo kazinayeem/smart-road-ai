@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "You" marker for drive mode: teal disc, white rim, white heading arrow (points up = heading). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp" android:height="44dp" android:viewportWidth="44" android:viewportHeight="44">
+    <path android:fillColor="#330E7490" android:pathData="M22,0a22,22 0,1 1,0 44a22,22 0,1 1,0 -44z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M22,7a15,15 0,1 1,0 30a15,15 0,1 1,0 -30z"/>
+    <path android:fillColor="#0E7490" android:pathData="M22,9.5a12.5,12.5 0,1 1,0 25a12.5,12.5 0,1 1,0 -25z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M22,13.5L15.5,29l6.5,-3.2 6.5,3.2z"/>
+</vector>

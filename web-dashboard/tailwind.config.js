@@ -9,6 +9,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // SmartPothole brand tokens (design-system/smartpothole-ai/MASTER.md), shared with the Android app.
+        ink: { DEFAULT: '#0B1B33', 900: '#0B1220', 800: '#131C2E', 700: '#1C2740' },
+        safety: { DEFAULT: '#C2410C', 400: '#FB923C', 500: '#F97316', 50: '#FFF7ED', 100: '#FFEDD5' },
+        route: { DEFAULT: '#0E7490', 300: '#67E8F9', 400: '#22D3EE', 50: '#ECFEFF' },
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',

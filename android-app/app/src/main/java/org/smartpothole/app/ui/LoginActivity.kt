@@ -4,15 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.launch
 import org.smartpothole.app.R
 import org.smartpothole.app.auth.AuthManager
@@ -28,7 +25,10 @@ class LoginActivity : AppCompatActivity() {
             openHome()
             return
         }
+        edgeToEdge()
         setContentView(R.layout.activity_login)
+        findViewById<View>(R.id.loginScroll).padForSafeArea(top = true, bottom = true, ime = true)
+        val title = findViewById<TextView>(R.id.tvAuthTitle)
 
         val subtitle = findViewById<TextView>(R.id.tvAuthSubtitle)
         val registerFields = findViewById<View>(R.id.layoutRegisterFields)
@@ -42,25 +42,15 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<MaterialButton>(R.id.btnLogin)
         val btnToggle = findViewById<MaterialButton>(R.id.btnToggleMode)
         val btnForgot = findViewById<MaterialButton>(R.id.btnForgotPassword)
-        val progress = findViewById<ProgressBar>(R.id.progressAuth)
-        val chips = findViewById<ChipGroup>(R.id.chipGroupVehicle)
-
-        AuthManager.VEHICLES.forEach { (key, label) ->
-            chips.addView(Chip(this).apply {
-                text = label
-                tag = key
-                isCheckable = true
-                isChecked = key == "MOTORCYCLE"
-                id = View.generateViewId()
-                minHeight = (48 * resources.displayMetrics.density).toInt()
-            })
-        }
+        val progress = findViewById<View>(R.id.progressAuth)
+        var vehicle = "MOTORCYCLE"
+        VehiclePicker.bind(findViewById(R.id.gridVehicle), vehicle) { vehicle = it }
 
         fun setBusy(busy: Boolean) {
             inFlight = busy
             btnLogin.isEnabled = !busy
             btnToggle.isEnabled = !busy
-            progress.visibility = if (busy) View.VISIBLE else View.GONE
+            progress.visibility = if (busy) View.VISIBLE else View.INVISIBLE
         }
 
         fun showError(msg: String?) {
@@ -75,7 +65,8 @@ class LoginActivity : AppCompatActivity() {
             btnForgot.visibility = if (isRegisterMode) View.GONE else View.VISIBLE
             btnLogin.text = if (isRegisterMode) "Create account" else "Sign in"
             btnToggle.text = if (isRegisterMode) "Already have an account? Sign in" else "New here? Create an account"
-            subtitle.text = if (isRegisterMode) "Create your citizen account" else "Sign in with your username or email"
+            title.text = if (isRegisterMode) "Create your account" else "Welcome back"
+            subtitle.text = if (isRegisterMode) "Riders report and get warned about potholes" else "Sign in with your username or email"
             showError(null)
         }
 
@@ -87,7 +78,6 @@ class LoginActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     if (isRegisterMode) {
-                        val vehicle = chips.findViewById<Chip>(chips.checkedChipId)?.tag as? String ?: "CAR"
                         AuthManager.register(
                             this@LoginActivity,
                             name = etName.text?.toString().orEmpty(),

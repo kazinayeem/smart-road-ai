@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/homeScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sp_bg"
+    android:clipToPadding="true">
+
+    <LinearLayout
+        android:id="@+id/homeContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/sp_gutter"
+        android:paddingTop="@dimen/sp_space_4"
+        android:paddingBottom="@dimen/sp_space_5">
+
+        <!-- Greeting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_avatar"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:text="R"
+                android:textColor="@color/sp_on_primary_container"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_space_3"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvGreeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good evening"
+                    android:textAppearance="@style/SP.Text.Muted" />
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Rider"
+                    android:textAppearance="@style/SP.Text.Title" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_logo" />
+        </LinearLayout>
+
+        <!-- Live status chips -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_4"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/chipGps"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_chip_neutral"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:text="Finding GPS…"
+                android:textAppearance="@style/SP.Text.Label"
+                app:drawableStartCompat="@drawable/ic_my_location"
+                app:drawableTint="@color/sp_on_surface" />
+
+            <TextView
+                android:id="@+id/chipNetwork"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="@dimen/sp_space_2"
+                android:background="@drawable/bg_chip_neutral"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:text="Online"
+                android:textAppearance="@style/SP.Text.Label"
+                app:drawableStartCompat="@drawable/ic_cloud_done"
+                app:drawableTint="@color/sp_on_surface" />
+        </LinearLayout>
+
+        <!-- Primary action -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardStartDetection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_4"
+            android:clickable="true"
+            android:contentDescription="Start pothole detection with the camera"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/sp_primary"
+            app:cardCornerRadius="16dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/sp_space_4">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Start detection"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:textColor="@color/sp_on_primary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="The camera spots potholes and reports them with GPS and time. Video stays on your phone."
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/sp_on_primary" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="@dimen/sp_space_3"
+                    android:importantForAccessibility="no"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_camera"
+                    app:tint="@color/sp_on_primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Quick actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_3"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/actionSplit"
+                layout="@layout/item_quick_action"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/actionDrive"
+                layout="@layout/item_quick_action"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/sp_space_2"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/actionCompanion"
+                layout="@layout/item_quick_action"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnQuickGpsMark"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/sp_space_3"
+            android:text="Mark a pothole here"
+            app:icon="@drawable/ic_add_location"
+            app:iconGravity="textStart" />
+
+        <!-- Stats -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/sp_space_3">
+
+                <include android:id="@+id/statTotal" layout="@layout/item_stat" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+                <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/sp_outline" />
+                <include android:id="@+id/statPending" layout="@layout/item_stat" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+                <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/sp_outline" />
+                <include android:id="@+id/statUploaded" layout="@layout/item_stat" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Nearby hazards -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_5"
+            android:accessibilityHeading="true"
+            android:text="Nearby hazards"
+            android:textAppearance="@style/SP.Text.Section" />
+
+        <LinearLayout
+            android:id="@+id/listNearby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tvNearbyEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2"
+            android:background="@drawable/bg_chip_neutral"
+            android:padding="@dimen/sp_space_4"
+            android:text="Looking for reported potholes near you…"
+            android:textAppearance="@style/SP.Text.Muted" />
+
+        <!-- Recent reports -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_5"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:accessibilityHeading="true"
+                android:text="Your recent reports"
+                android:textAppearance="@style/SP.Text.Section" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSeeAll"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="See all" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/listRecent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tvRecentEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_neutral"
+            android:padding="@dimen/sp_space_4"
+            android:text="No reports yet. Start detection or mark a pothole to create your first one."
+            android:textAppearance="@style/SP.Text.Muted" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

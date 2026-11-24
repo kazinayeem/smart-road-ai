@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import org.smartpothole.app.R
+import org.smartpothole.app.ui.edgeToEdge
+import org.smartpothole.app.ui.padForSafeArea
 import org.smartpothole.app.camera.CameraActivity
 import java.util.UUID
 
@@ -39,7 +41,9 @@ class SessionHubActivity : AppCompatActivity() {
             finish()
             return
         }
+        edgeToEdge()
         setContentView(R.layout.activity_session_hub)
+        findViewById<View>(R.id.hubRoot).padForSafeArea(top = true, bottom = true, ime = true)
 
         btnBack = findViewById(R.id.btnBack)
         btnCreateSession = findViewById(R.id.btnCreateSession)
@@ -87,7 +91,7 @@ class SessionHubActivity : AppCompatActivity() {
 
     private fun handleCreateSession() {
         btnCreateSession.isEnabled = false
-        btnCreateSession.text = "Creating Session..."
+        btnCreateSession.text = "Creating…"
 
         LiveSessionManager.createSession(
             scannerId = userId,
@@ -105,7 +109,7 @@ class SessionHubActivity : AppCompatActivity() {
             },
             onError = { errMsg ->
                 btnCreateSession.isEnabled = true
-                btnCreateSession.text = "Create Scanning Session"
+                btnCreateSession.text = "Create session"
                 Toast.makeText(this, "Error: $errMsg", Toast.LENGTH_LONG).show()
             }
         )
@@ -119,7 +123,7 @@ class SessionHubActivity : AppCompatActivity() {
         }
 
         btnJoinSession.isEnabled = false
-        btnJoinSession.text = "Connecting..."
+        btnJoinSession.text = "Joining…"
 
         LiveSessionManager.joinSession(
             sessionCode = code,
@@ -127,7 +131,7 @@ class SessionHubActivity : AppCompatActivity() {
             participantName = userName,
             onSuccess = { session ->
                 btnJoinSession.isEnabled = true
-                btnJoinSession.text = "Join Live Session"
+                btnJoinSession.text = "Join session"
 
                 val intent = Intent(this, CompanionActivity::class.java).apply {
                     putExtra("EXTRA_SESSION_ID", session.sessionId)
@@ -140,7 +144,7 @@ class SessionHubActivity : AppCompatActivity() {
             },
             onError = { errMsg ->
                 btnJoinSession.isEnabled = true
-                btnJoinSession.text = "Join Live Session"
+                btnJoinSession.text = "Join session"
                 Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show()
             }
         )

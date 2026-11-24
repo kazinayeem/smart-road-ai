@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loginScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/sp_bg"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
-        android:paddingVertical="40dp">
+        android:paddingVertical="24dp">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="16dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_logo" />
 
         <TextView
+            android:id="@+id/tvAuthTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SmartPothole AI"
-            android:textColor="@color/primary"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="20dp"
+            android:accessibilityHeading="true"
+            android:text="Welcome back"
+            android:textAppearance="@style/SP.Text.Display" />
 
         <TextView
             android:id="@+id/tvAuthSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Rider sign-in: username or email"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:layout_marginTop="4dp"
+            android:text="Sign in with your username or email"
+            android:textAppearance="@style/SP.Text.Muted" />
 
         <!-- Registration-only fields -->
         <LinearLayout
@@ -40,93 +48,87 @@
             android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Full name">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="name"
                     android:inputType="textPersonName|textCapWords" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="Username (3–20 letters, digits, _ or .)">
-
+                android:hint="Username"
+                app:helperText="3–20 letters, digits, _ or . · not case-sensitive">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:autofillHints="username"
+                    android:inputType="textNoSuggestions" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="Email (for password recovery)">
-
+                android:hint="Email"
+                app:helperText="Used only for password recovery">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="emailAddress"
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Your vehicle (you can change this later)"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:layout_marginTop="20dp"
+                android:text="Your vehicle"
+                android:textAppearance="@style/SP.Text.Section" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupVehicle"
+            <GridLayout
+                android:id="@+id/gridVehicle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:selectionRequired="true"
-                app:singleSelection="true"
-                xmlns:app="http://schemas.android.com/apk/res-auto" />
+                android:columnCount="3" />
         </LinearLayout>
 
-        <!-- Login identifier (username or email) -->
+        <!-- Login identifier -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilIdentifier"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:hint="Username or email">
-
+            android:hint="Username or email"
+            app:startIconDrawable="@drawable/ic_person">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etIdentifier"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:autofillHints="username"
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Password"
-            app:endIconMode="password_toggle"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
-
+            app:endIconMode="password_toggle">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,59 +136,64 @@
             android:id="@+id/tvAuthError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/danger"
-            android:textSize="13sp"
+            android:layout_marginTop="12dp"
+            android:accessibilityLiveRegion="polite"
+            android:background="@drawable/bg_chip_danger"
+            android:padding="12dp"
+            android:textColor="@color/sp_danger"
+            android:textSize="14sp"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="Sign in"
-            android:textAllCaps="false"
             android:textSize="16sp" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressAuth"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="12dp"
-            android:visibility="gone" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnForgotPassword"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:text="Forgot password?"
-            android:textAllCaps="false" />
+            android:layout_gravity="center_horizontal"
+            android:text="Forgot password?" />
 
         <LinearLayout
             android:id="@+id/layoutDemoLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:background="@drawable/bg_chip_warning"
             android:orientation="vertical"
+            android:padding="12dp"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Demo quick login (debug build only)"
-                android:textColor="@color/warning"
+                android:text="Demo quick login · debug build only"
+                android:textColor="@color/sp_warning"
                 android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnToggleMode"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:text="New here? Create an account"
-            android:textAllCaps="false" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="New here? Create an account" />
     </LinearLayout>
 </ScrollView>

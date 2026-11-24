@@ -20,6 +20,9 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.smartpothole.app.R
+import org.smartpothole.app.ui.edgeToEdge
+import org.smartpothole.app.ui.padForSafeArea
+import androidx.core.content.ContextCompat
 import org.smartpothole.app.notification.LiveCompanionNotificationHelper
 import java.util.UUID
 
@@ -75,7 +78,9 @@ class CompanionActivity : AppCompatActivity() {
         Configuration.getInstance().load(this, getPreferences(Context.MODE_PRIVATE))
         Configuration.getInstance().userAgentValue = packageName
 
+        edgeToEdge()
         setContentView(R.layout.activity_companion)
+        findViewById<View>(R.id.companionRoot).padForSafeArea(top = true, bottom = true)
 
         sessionId = intent.getStringExtra("EXTRA_SESSION_ID") ?: ""
         sessionCode = intent.getStringExtra("EXTRA_SESSION_CODE") ?: ""
@@ -110,7 +115,7 @@ class CompanionActivity : AppCompatActivity() {
         tvScannerNameFooter = findViewById(R.id.tvScannerNameFooter)
         tvCompanionsFooter = findViewById(R.id.tvCompanionsFooter)
 
-        tvSessionTitle.text = "📡 Session: $sessionCode"
+        tvSessionTitle.text = "Session $sessionCode"
         tvScannerNameFooter.text = "Scanner: $scannerName"
 
         btnBack.setOnClickListener { finish() }
@@ -179,8 +184,8 @@ class CompanionActivity : AppCompatActivity() {
 
                 tvScannerLocationText.text = "Scanner: [${String.format("%.4f", loc.latitude)}, ${String.format("%.4f", loc.longitude)}]"
                 tvScannerAccuracyText.text = "Accuracy: ±${String.format("%.1f", loc.accuracy)}m • Speed: ${String.format("%.1f", loc.speed * 3.6f)} km/h"
-                tvScannerStatusBadge.text = "🟢 SCANNER ONLINE"
-                tvScannerStatusBadge.setTextColor(Color.parseColor("#10B981"))
+                tvScannerStatusBadge.text = "Scanner online"
+                tvScannerStatusBadge.setTextColor(ContextCompat.getColor(this@CompanionActivity, R.color.sp_success))
 
                 // Check significant area change (>600m from last recorded center)
                 if (lastScannerLat != 0.0 && lastScannerLng != 0.0) {
@@ -239,7 +244,7 @@ class CompanionActivity : AppCompatActivity() {
                     val role = child.child("role").getValue(String::class.java)
                     if (role == "COMPANION") companionCount++
                 }
-                tvCompanionsFooter.text = "👥 $companionCount Companion${if (companionCount != 1) "s" else ""} Active"
+                tvCompanionsFooter.text = "$companionCount companion${if (companionCount != 1) "s" else ""}"
             }
             override fun onCancelled(error: DatabaseError) {}
         }
@@ -253,8 +258,8 @@ class CompanionActivity : AppCompatActivity() {
             rvDetections.visibility = View.VISIBLE
 
             val total = adapter.itemCount
-            tvEventsHeader.text = "Live Detection Events ($total)"
-            tvNewPotholesBadge.text = "$total Defect${if (total != 1) "s" else ""}"
+            tvEventsHeader.text = "Live detections ($total)"
+            tvNewPotholesBadge.text = "$total"
 
             // Add map pin for the detected pothole
             val point = GeoPoint(detection.latitude, detection.longitude)
@@ -294,15 +299,15 @@ class CompanionActivity : AppCompatActivity() {
                     val timeSinceLoc = now - lastScannerLocationTime
                     withContext(Dispatchers.Main) {
                         if (timeSinceLoc > 30000L) {
-                            tvScannerStatusBadge.text = "🔴 SCANNER OFFLINE"
-                            tvScannerStatusBadge.setTextColor(Color.parseColor("#EF4444"))
+                            tvScannerStatusBadge.text = "Scanner offline (no update for 30 s)"
+                            tvScannerStatusBadge.setTextColor(ContextCompat.getColor(this@CompanionActivity, R.color.sp_danger))
                             if (!hasNotifiedOffline) {
                                 hasNotifiedOffline = true
                                 notificationHelper.notifyScannerOffline()
                             }
                         } else if (timeSinceLoc > 15000L) {
-                            tvScannerStatusBadge.text = "🟠 GPS STALE"
-                            tvScannerStatusBadge.setTextColor(Color.parseColor("#F59E0B"))
+                            tvScannerStatusBadge.text = "Scanner position is stale"
+                            tvScannerStatusBadge.setTextColor(ContextCompat.getColor(this@CompanionActivity, R.color.sp_warning))
                             if (!hasNotifiedGpsLoss) {
                                 hasNotifiedGpsLoss = true
                                 notificationHelper.notifyGpsLost()
@@ -331,7 +336,7 @@ class CompanionActivity : AppCompatActivity() {
         )
 
         AlertDialog.Builder(this)
-            .setTitle("🔔 Notification Preferences")
+            .setTitle("Notification preferences")
             .setMultiChoiceItems(options, checked) { _, which, isChecked ->
                 when (which) {
                     0 -> notificationHelper.setPreference(LiveCompanionNotificationHelper.PREF_SOUND_ENABLED, isChecked)

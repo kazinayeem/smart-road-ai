@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/onboardingRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sp_bg"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="32dp">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:accessibilityHeading="true"
+                android:text="Safer roads, mapped together"
+                android:textAppearance="@style/SP.Text.Display" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="SmartPothole spots potholes while you ride and warns you about the ones others have found."
+                android:textAppearance="@style/SP.Text.Muted" />
+
+            <include android:id="@+id/ob1" layout="@layout/item_onboarding_point" />
+            <include android:id="@+id/ob2" layout="@layout/item_onboarding_point" />
+            <include android:id="@+id/ob3" layout="@layout/item_onboarding_point" />
+            <include android:id="@+id/ob4" layout="@layout/item_onboarding_point" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGetStarted"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginVertical="16dp"
+        android:text="Get started"
+        android:textSize="16sp" />
+</LinearLayout>

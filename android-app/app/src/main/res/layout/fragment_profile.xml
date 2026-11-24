@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profileScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sp_bg"
+    android:clipToPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/sp_gutter"
+        android:paddingTop="@dimen/sp_space_4"
+        android:paddingBottom="@dimen/sp_space_5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvProfileAvatar"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_avatar"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:text="R"
+                android:textColor="@color/sp_on_primary_container"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_space_4"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvProfileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rahim Ahmed"
+                    android:textAppearance="@style/SP.Text.Title" />
+
+                <TextView
+                    android:id="@+id/tvProfileHandle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="citizen_rahim · Rider"
+                    android:textAppearance="@style/SP.Text.Muted" />
+
+                <TextView
+                    android:id="@+id/tvProfileEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="citizen@pothole.org"
+                    android:textAppearance="@style/SP.Text.Caption" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_5"
+            android:accessibilityHeading="true"
+            android:text="Your vehicle"
+            android:textAppearance="@style/SP.Text.Section" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Saved to your profile for group rides and stats. It doesn't change what you can access."
+            android:textAppearance="@style/SP.Text.Caption" />
+
+        <GridLayout
+            android:id="@+id/gridVehicles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2"
+            android:columnCount="3"
+            android:useDefaultMargins="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_5"
+            android:accessibilityHeading="true"
+            android:text="Alerts"
+            android:textAppearance="@style/SP.Text.Section" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/sp_space_4">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchVoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="Spoken warnings while driving"
+                    android:textAppearance="@style/SP.Text.Body" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/sp_outline" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchNearby"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="Warn me about reported potholes ahead"
+                    android:textAppearance="@style/SP.Text.Body" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_5"
+            android:accessibilityHeading="true"
+            android:text="Privacy"
+            android:textAppearance="@style/SP.Text.Section" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/sp_space_4">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_shield"
+                    app:tint="@color/sp_secondary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_space_3"
+                    android:layout_weight="1"
+                    android:text="Camera video is analysed on this phone and never uploaded. A report sends only position, time, confidence and severity. Your live location is shared only inside a live session you start or join, and stops when you leave it."
+                    android:textAppearance="@style/SP.Text.Muted" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignOut"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/sp_space_5"
+            android:text="Sign out"
+            android:textColor="@color/sp_danger"
+            app:icon="@drawable/ic_logout"
+            app:iconTint="@color/sp_danger"
+            app:strokeColor="@color/sp_danger" />
+
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_space_3"
+            android:gravity="center"
+            android:text="SmartPothole AI"
+            android:textAppearance="@style/SP.Text.Caption" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

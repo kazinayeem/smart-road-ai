@@ -4,6 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PotholeReport } from '@/types';
 import { Navigation, Crosshair, Plus, ShieldAlert, Sparkles } from 'lucide-react';
 
+const esc = (v: unknown) =>
+  String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
+
 // Filter chips and their counters use the same status groups.
 const FILTER_GROUPS: Record<string, string[]> = {
   NEW_REPORT: ['NEW', 'NEW_REPORT', 'UNDER_REVIEW'],
@@ -212,13 +215,19 @@ export const PotholeMap: React.FC<PotholeMapProps> = ({
           .addTo(map)
           .on('click', () => onSelectReport(report));
 
+        // Every user-supplied value is escaped: tooltips are rendered as HTML.
+        const seen = (report.totalDetections || 1) > 1
+          ? `<br/><span style="color:#c2410c;">Seen ${Number(report.totalDetections)}× · last ${esc(new Date(report.lastDetectedAt || report.updatedAt).toLocaleString())}</span>`
+          : '';
+        const conf = report.source === 'LIVE_CAMERA' ? ` • AI ${(Number(report.confidence) * 100).toFixed(0)}%` : ' • Manual';
         marker.bindTooltip(
           `<div style="font-family: inherit; font-size: 11px; padding: 2px;">
-             <strong style="color: #0f172a; font-size: 12px;">${report.address || 'Pothole Defect'}</strong><br/>
+             <strong style="color: #0f172a; font-size: 12px;">${esc(report.address || 'Pothole')}</strong><br/>
              <span style="display:inline-block; margin-top:3px; padding: 1px 6px; border-radius: 4px; background: ${color}20; color: ${color}; font-weight: bold;">
-               ${report.status.replace('_', ' ')}
+               ${esc(report.status.replace(/_/g, ' '))}
              </span>
-             <span style="color: #64748b; margin-left: 6px;">• AI: ${(report.confidence * 100).toFixed(0)}%</span>
+             <span style="color: #64748b; margin-left: 6px;">${conf}</span><br/>
+             <span style="color:#475569;">Detected ${esc(new Date(report.firstDetectedAt || report.createdAt).toLocaleString())}</span>${seen}
            </div>`,
           { direction: 'top', offset: [0, -12], opacity: 0.96 }
         );
