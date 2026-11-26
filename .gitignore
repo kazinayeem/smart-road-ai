@@ -38,3 +38,6 @@ GoogleService-Info.plist
 web-dashboard/.next-export/
 firebase/public/
 firebase/.firebase/
+
+# Local Claude Code config (removed from the repo on GitHub)
+.claude/
