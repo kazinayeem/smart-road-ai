@@ -27,6 +27,15 @@
         "cd firebase/public && python3 -m http.server 3310"
       ],
       "port": 3310
+    },
+    {
+      "name": "slides-html",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd documentation/submission/build/html && python3 -m http.server 3311"
+      ],
+      "port": 3311
     }
   ]
 }

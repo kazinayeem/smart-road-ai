@@ -19,11 +19,13 @@ Submitted to **Dipta Dipayan Kar**. Deadline: 9 December 2026, 11:59 PM. Present
 ## Links
 - Source code: https://github.com/kazinayeem/smart-road-ai
 - Live dashboard and Android APK: https://shorturl.at/Ok9CS
-- Video overview: https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link
+- Demo video (YouTube): https://youtu.be/4Cp7OcaJe8g
+- Full overview (Google Drive): https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link
 
 ## Rebuilding
 All documents are generated from `build/` (Python 3, `python-docx`, `python-pptx`, `matplotlib`, Google Chrome for PDF).
 Code listings are read directly from the repository, so they always match the current code.
+The slides are built from the team's own deck (`build/reference_presentation.pptx`): `slides.py` adds the DIU title details, a Team slide, a Links slide with QR codes and the credit line, switches fonts to Arial, and `pptx_to_pdf.py` draws the PDF.
 
 ```bash
 cd documentation/submission/build

@@ -1,11 +1,101 @@
-# SmartPothole — AI-Powered Smart Pothole Detection & Civic Road Maintenance Platform
+<div align="center">
 
-[![Next.js](https://img.shields.io/badge/Next.js-14.2-black?logo=next.js)](https://nextjs.org/)
+<img src="documentation/proposal/diu_logo.jpg" alt="Daffodil International University" width="90">
+
+# SmartPothole AI
+
+### Phones that find potholes on the road, and a city system that gets them fixed.
+
+**On-device YOLOv8 pothole detection (Android) + role-based repair management (Web) + Firebase**
+
+[![Watch the demo](https://img.shields.io/badge/▶_Watch_demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/4Cp7OcaJe8g?si=2Ogdcp3R_DOtYyAc)
+[![Download APK](https://img.shields.io/badge/Download-Android_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://shorturl.at/Ok9CS)
+[![Live dashboard](https://img.shields.io/badge/Open-Live_Dashboard-F97316?style=for-the-badge&logo=firebase&logoColor=white)](https://cryptro.web.app)
+[![Full video](https://img.shields.io/badge/Full_overview-Google_Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link)
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![Android](https://img.shields.io/badge/Android-Kotlin%20%7C%20CameraX-green?logo=android)](https://developer.android.com/)
 [![YOLOv8](https://img.shields.io/badge/AI%20Model-YOLOv8s%20INT8%20ONNX%20(10.96MB)-orange)](https://github.com/ultralytics/ultralytics)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20RTDB-amber?logo=firebase)](https://firebase.google.com/)
 
-An end-to-end civic road maintenance system (work in progress — see AUDIT_REPORT.md) featuring **real-time on-device YOLOv8 AI inference on Android (CameraX)**, **zero camera frame / video uploads (metadata-only telemetry transmission)**, **strict role-gated authentication**, and a **multi-role municipal management web portal** for City Corporations, Contractors, and Citizens.
+</div>
+
+## ▶ Demo video
+
+<a href="https://youtu.be/4Cp7OcaJe8g?si=2Ogdcp3R_DOtYyAc"><img src="https://img.youtube.com/vi/4Cp7OcaJe8g/maxresdefault.jpg" alt="SmartPothole AI demo video on YouTube" width="100%"></a>
+
+Click the image to watch on YouTube. A longer full-project walkthrough is on [Google Drive](https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link).
+
+## 🔗 Try it
+
+| What | Link |
+|---|---|
+| 📱 **Android app (APK)** and live dashboard | **https://shorturl.at/Ok9CS** |
+| 🌐 Web dashboard (Firebase Hosting) | https://cryptro.web.app |
+| 🎬 Demo video (YouTube) | https://youtu.be/4Cp7OcaJe8g |
+| 🎞️ Full project overview (Google Drive) | [Open video](https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link) |
+| 💻 Source code | https://github.com/kazinayeem/smart-road-ai |
+
+**How to use it:** install the APK on an Android phone (allow "install from unknown sources"), register as a rider,
+mount the phone facing the road and tap **Start detection**. Potholes are detected on the phone, you get a voice and
+vibration warning, and the report appears on the web dashboard, where the City Corporation verifies it, assigns a
+contractor and closes it after the repair.
+
+## 📸 Screenshots
+
+| Android: home, live detection, split mode |
+|---|
+| <img src="documentation/submission/build/assets/app_panel1.png" alt="Android home, live detection and split mode" width="100%"> |
+
+| Android: hazard map, route planning, my reports |
+|---|
+| <img src="documentation/submission/build/assets/app_panel2.png" alt="Android hazard map, route planning and reports" width="100%"> |
+
+| Web: City Corporation map | Web: report triage |
+|---|---|
+| <img src="documentation/submission/build/assets/web_city_map.png" alt="City Corporation map" width="100%"> | <img src="documentation/submission/build/assets/web_triage.png" alt="Report triage table" width="100%"> |
+
+## 🧭 How it works
+
+<img src="documentation/submission/build/assets/architecture.png" alt="System architecture" width="100%">
+
+1. **Detect:** YOLOv8s (INT8, 10.96 MB) runs on the phone through ONNX Runtime on live CameraX frames.
+2. **Confirm:** a pothole must appear in 2 of 3 frames above 0.55 confidence, with a fresh GPS fix.
+3. **Warn:** the driver hears "Pothole detected ahead" and feels a vibration, even offline.
+4. **Sync:** the report is saved locally first and uploaded when there is signal; repeated sightings merge into one record.
+5. **Repair:** the City Corporation verifies and assigns, the contractor repairs, and only the city can close it.
+
+No camera image or video ever leaves the phone. Only position, confidence and time are sent.
+
+## 📚 Project documents (SE 331)
+
+Each document is available as Word and PDF in [`documentation/submission/`](documentation/submission/).
+
+| Document | PDF |
+|---|---|
+| SRS (lab report) with code of the main features | [01_SRS_Lab_Report.pdf](documentation/submission/01_SRS_Lab_Report.pdf) |
+| Project proposal | [02_Project_Proposal.pdf](documentation/submission/02_Project_Proposal.pdf) |
+| Code documentation | [03_Code_Documentation.pdf](documentation/submission/03_Code_Documentation.pdf) |
+| Diagrams and workflows | [04_Diagrams_and_Workflows.pdf](documentation/submission/04_Diagrams_and_Workflows.pdf) |
+| Group discussion | [05_Group_Discussion.pdf](documentation/submission/05_Group_Discussion.pdf) |
+| Presentation slides | [06_Presentation_Slides.pdf](documentation/submission/06_Presentation_Slides.pdf) · [PPTX](documentation/submission/06_Presentation_Slides.pptx) |
+
+## 👤 Team
+
+| Name | ID | Role |
+|---|---|---|
+| **Mohammad Ali Nayeem** | 232-35-022 | Team Lead. Built everything: AI/ML, Android app, web frontend, Firebase backend, testing, deployment, documents |
+| Mubashir Alam | 232-35-682 | Group member (attended the group discussion) |
+| Nayem Miah | 232-35-628 | Group member (attended the group discussion) |
+
+Daffodil International University · Department of Software Engineering · SE 331 Software Engineering Design
+Capstone Project · Section 42_H1 · Submitted to **Dipta Dipayan Kar**
+
+> Built by **Mohammad Ali Nayeem**.
+
+## Technical overview
+
+An end-to-end civic road maintenance system featuring **real-time on-device YOLOv8 AI inference on Android (CameraX)**, **zero camera frame / video uploads (metadata-only telemetry transmission)**, **strict role-gated authentication**, and a **multi-role municipal management web portal** for City Corporations, Contractors, and Citizens. See AUDIT_REPORT.md for what is tested and what is still missing.
 
 ---
 
