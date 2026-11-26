@@ -35,7 +35,7 @@ class SmartPotholeApp : Application() {
         try {
             if (FirebaseApp.getApps(this).isEmpty()) {
                 val options = FirebaseOptions.Builder()
-                    .setApiKey("REMOVED_FIREBASE_API_KEY")
+                    .setApiKey(BuildConfig.FIREBASE_API_KEY)
                     .setApplicationId("1:211774658995:android:18f8c0dbf8663bb2d213c6")
                     .setProjectId("cryptro")
                     .setDatabaseUrl("https://cryptro-default-rtdb.firebaseio.com")

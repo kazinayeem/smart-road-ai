@@ -18,7 +18,7 @@ import { PotholeReport, UserProfile, Contractor, ActivityLogEntry, UserRole } fr
 // Firebase web config is public by design (it identifies the project; it is not a secret).
 // Access control is enforced by firebase/database.rules.json, never by this client.
 export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'REMOVED_FIREBASE_API_KEY',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'cryptro.firebaseapp.com',
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'cryptro',
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'cryptro.firebasestorage.app',

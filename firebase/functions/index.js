@@ -16,7 +16,7 @@ const admin = require('firebase-admin');
 
 // Explicit URL so the emulator and production read the same database instance.
 admin.initializeApp({ databaseURL: process.env.SP_DATABASE_URL || 'https://cryptro-default-rtdb.firebaseio.com' });
-const WEB_API_KEY = defineString('WEB_API_KEY', { default: 'REMOVED_FIREBASE_API_KEY' });
+const WEB_API_KEY = defineString('WEB_API_KEY');
 
 const GENERIC = 'Incorrect username/email or password.';
 const WINDOW_MS = 15 * 60 * 1000;

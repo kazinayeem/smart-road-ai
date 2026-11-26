@@ -26,8 +26,11 @@ __pycache__/
 firebase/tests/node_modules/
 
 # Local secrets (service-account keys must never be committed)
-.env.local
-.env.*.local
+.env
+.env.*
+!.env.example
+android-app/app/google-services.json
+GoogleService-Info.plist
 *service-account*.json
 
 # OS

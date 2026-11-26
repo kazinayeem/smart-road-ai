@@ -117,7 +117,7 @@ The application includes a collaborative **Live Companion Mode**:
 The project is preconfigured with the Firebase project `cryptro`:
 ```javascript
 const firebaseConfig = {
-  apiKey: "REMOVED_FIREBASE_API_KEY",
+  apiKey: "<YOUR_FIREBASE_WEB_API_KEY>",
   authDomain: "cryptro.firebaseapp.com",
   projectId: "cryptro",
   storageBucket: "cryptro.firebasestorage.app",
