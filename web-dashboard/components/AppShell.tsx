@@ -46,7 +46,7 @@ export function AppShell({ title, nav, children }: { title: string; nav: NavItem
         {children}
       </main>
       <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500">
-        SmartPothole AI · Map data © OpenStreetMap contributors
+        SmartPothole AI · Built by <span className="font-semibold text-slate-700">Mohammad Ali Nayeem</span> · Map data © OpenStreetMap contributors
       </footer>
     </div>
   );

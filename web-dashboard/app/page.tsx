@@ -296,6 +296,12 @@ export default function Home() {
           <Logo className="text-slate-900" />
           <p>No reports on a road doesn&apos;t mean the road is safe. Map data © OpenStreetMap contributors.</p>
         </div>
+        <div className="border-t border-slate-100 py-4 text-center text-sm text-slate-500">
+          Built by <span className="font-semibold text-slate-700">Mohammad Ali Nayeem</span> ·{' '}
+          <a href="https://github.com/kazinayeem/smart-road-ai" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-700">
+            Source on GitHub
+          </a>
+        </div>
       </footer>
     </div>
   );

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SmartPothole Project Proposal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#bbb;font-family:"Times New Roman",Times,serif;color:#000}
+.page{width:210mm;height:297mm;margin:20px auto;background:#fff;position:relative;overflow:hidden;padding:22mm 24mm 24mm}
+@page{size:A4;margin:0}
+@media print{html,body{background:#fff}.page{margin:0;break-after:page}.page:last-child{break-after:auto}}
+p,li,td,th{font-size:11.5pt;line-height:1.45;text-align:justify}
+p+p{margin-top:6pt}
+h2{font-size:13pt;font-weight:bold;margin:14pt 0 5pt}
+h3{font-size:11.5pt;font-weight:bold;margin:9pt 0 3pt}
+ul,ol{padding-left:20pt;margin-top:3pt}
+li{margin-bottom:2pt}
+table{width:100%;border-collapse:collapse;margin:6pt 0 4pt}
+th,td{border:0.75pt solid #000;padding:3pt 6pt;vertical-align:top;text-align:left;font-size:10.5pt;line-height:1.35}
+th{font-weight:bold;background:#e8e8e8}
+.cap{font-size:10pt;text-align:center;margin-top:3pt;font-style:italic}
+.num{position:absolute;bottom:9mm;left:0;right:0;text-align:center;font-size:10pt}
+.mono{font-family:"Courier New",monospace;font-size:10pt}
+/* title page */
+.tp{display:flex;flex-direction:column;align-items:center;text-align:center;height:100%}
+.tp img{width:120px;height:120px;filter:grayscale(1) contrast(1.1);margin-top:6mm}
+.tp .uni{font-size:16pt;font-weight:bold;margin-top:12pt;letter-spacing:.5pt}
+.tp .kind{font-size:13pt;margin-top:34pt;letter-spacing:3pt;text-transform:uppercase}
+.tp h1{font-size:20pt;line-height:1.3;font-weight:bold;margin-top:14pt;max-width:150mm}
+.tp .sub{font-size:12pt;font-style:italic;margin-top:10pt;max-width:140mm;text-align:center}
+.tp hr{width:60mm;border:none;border-top:1pt solid #000;margin:22pt auto}
+.abs{text-align:left;width:100%}
+.abs h2{text-align:center;margin-top:0}
+.tp .date{margin-top:auto;font-size:12pt}
+.gantt td{text-align:center;padding:3pt 0;font-size:9.5pt}
+.gantt td:first-child{text-align:left;padding-left:6pt;width:36%}
+.gantt td.on{background:#555}
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1: TITLE + ABSTRACT ================= -->
+<section class="page">
+<div class="tp">
+  <img src="diu_logo.jpg" alt="Daffodil International University logo">
+  <div class="uni">Daffodil International University</div>
+  <div class="kind">Project Proposal</div>
+  <h1>SmartPothole AI: On-Device Pothole Detection and Civic Road-Maintenance Platform</h1>
+  <p class="sub">A privacy-preserving system that uses riders’ smartphones to detect potholes and gives city authorities an accountable workflow from detection to verified repair.</p>
+  <hr>
+  <div class="abs">
+    <h2>Abstract</h2>
+    <p>Potholes are found late, reported many times or not at all, and are rarely tracked through to a confirmed repair. This project proposes SmartPothole AI, a platform in which an Android phone mounted on a vehicle detects potholes in real time with a quantized YOLOv8 model running entirely on the device. The driver is warned by voice and vibration, and only a small record (class, confidence, GPS position and time) is sent to a Firebase backend; no image or video leaves the phone. Reports from many vehicles are merged into one record per pothole, and a role-based web dashboard lets the City Corporation verify, assign and close each repair while contractors update only their own jobs. A working prototype already exists. The proposed work will test it on real phones, build and label a local road dataset, retrain and evaluate the model, and run a small field pilot with measured results.</p>
+    <p style="margin-top:8pt"><b>Keywords:</b> pothole detection, YOLOv8, edge AI, Android, Firebase, smart city, road maintenance.</p>
+  </div>
+  <div class="date">November 2026</div>
+</div>
+</section>
+
+<!-- ================= PAGE 2 ================= -->
+<section class="page">
+<h2 style="margin-top:0">1. Introduction</h2>
+<p>Road surfaces in busy cities break down quickly under heavy traffic and rain. An unrepaired pothole damages vehicles, causes sudden braking and swerving, and leads to accidents, with the greatest risk to motorcycles, bicycles and rickshaws. City authorities are responsible for repairs, but they seldom have an up-to-date and accurate picture of where defects are and how serious they are.</p>
+<p>Modern smartphones have a good camera, GPS and enough computing power to run a compact object-detection model. This makes it possible to turn ordinary vehicles into road inspectors without special hardware, provided the system is accurate, respects privacy and is connected to the people who actually repair the road.</p>
+
+<h2>2. Problem Statement</h2>
+<p>Current practice has four main gaps:</p>
+<ul>
+  <li><b>Slow discovery:</b> potholes are found by periodic inspection or by complaints that arrive late and with vague locations.</li>
+  <li><b>Duplicate and missing reports:</b> the same pothole is reported many times while others are never reported.</li>
+  <li><b>Weak accountability:</b> there is often no record of who verified, repaired and approved a job.</li>
+  <li><b>Privacy and cost:</b> uploading road video from many phones is costly and captures people and number plates.</li>
+</ul>
+<p>There is therefore a need for a low-cost, privacy-preserving system that detects potholes automatically from ordinary vehicles, merges the reports into reliable geolocated records, and manages each defect through an auditable repair workflow.</p>
+
+<h2>3. Objectives</h2>
+<p>The aim is to design, build and evaluate a smartphone-based, on-device AI system for pothole detection connected to a secure civic repair workflow. The specific objectives are to:</p>
+<ol>
+  <li>Run a lightweight YOLOv8 detector in real time on mid-range Android phones without uploading images.</li>
+  <li>Reduce false and duplicate reports using frame confirmation, confidence and distance checks, and a fresh GPS fix.</li>
+  <li>Warn drivers instantly and offline with voice and vibration alerts that consider the direction of travel.</li>
+  <li>Merge detections from many vehicles into one record per pothole.</li>
+  <li>Provide a role-based web dashboard with a nine-stage, fully logged repair lifecycle.</li>
+  <li>Collect and label a local dataset, retrain the model and report precision, recall, mAP and on-phone speed.</li>
+  <li>Validate the complete system in a small field pilot.</li>
+</ol>
+<div class="num">1</div>
+</section>
+
+<!-- ================= PAGE 3 ================= -->
+<section class="page">
+<h2 style="margin-top:0">4. Proposed System</h2>
+<p>The system has three parts connected through a serverless, real-time backend (Figure 1). The phone does the AI work, Firebase stores the data and enforces who may change it, and the web dashboard gives each user role its own view.</p>
+
+<svg viewBox="0 0 600 190" width="100%" style="margin-top:8pt" font-family="Times New Roman, serif">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#000"/></marker></defs>
+  <g fill="none" stroke="#000" stroke-width="1">
+    <rect x="1" y="1" width="170" height="186"/>
+    <rect x="215" y="1" width="170" height="186"/>
+    <rect x="429" y="1" width="170" height="186"/>
+    <line x1="1" y1="30" x2="171" y2="30"/><line x1="215" y1="30" x2="385" y2="30"/><line x1="429" y1="30" x2="599" y2="30"/>
+  </g>
+  <g font-size="13" font-weight="bold" text-anchor="middle"><text x="86" y="21">Android App (Rider)</text><text x="300" y="21">Firebase Backend</text><text x="514" y="21">Web Dashboard</text></g>
+  <g font-size="12">
+    <text x="12" y="54">• CameraX live camera</text><text x="12" y="76">• YOLOv8s INT8 (ONNX)</text><text x="12" y="98">• Confirm, gate, severity</text><text x="12" y="120">• Voice + haptic warning</text><text x="12" y="142">• Room offline outbox</text><text x="12" y="164">• WorkManager sync</text>
+    <text x="226" y="54">• Authentication</text><text x="226" y="76">• Realtime Database</text><text x="226" y="98">• Security rules (roles)</text><text x="226" y="120">• Activity (audit) logs</text><text x="226" y="142">• Cloud Function</text><text x="226" y="164">• Push messaging (FCM)</text>
+    <text x="440" y="54">• Login and role guard</text><text x="440" y="76">• City Corporation desk</text><text x="440" y="98">• Contractor job portal</text><text x="440" y="120">• Citizen map and reports</text><text x="440" y="142">• Leaflet + OpenStreetMap</text><text x="440" y="164">• Live status updates</text>
+  </g>
+  <g stroke="#000" stroke-width="1.2" fill="none">
+    <line x1="172" y1="75" x2="213" y2="75" marker-end="url(#a)"/>
+    <line x1="214" y1="125" x2="173" y2="125" marker-end="url(#a)"/>
+    <line x1="386" y1="75" x2="427" y2="75" marker-end="url(#a)"/>
+    <line x1="428" y1="125" x2="387" y2="125" marker-end="url(#a)"/>
+  </g>
+</svg>
+<p class="cap">Figure 1. System architecture. Only structured data (no images) moves between the parts.</p>
+
+<h2>5. Methodology</h2>
+<h3>5.1 Detection model</h3>
+<p>The starting point is a single-class YOLOv8s detector (about 11.1 million parameters, 28.4 GFLOPs at 640×640) taken from a public pretrained checkpoint. It is exported to ONNX and quantized to INT8, which reduces the file from 42.67 MB to 10.96 MB (74.3% smaller). The input is a 640×640 RGB image and the output is 8,400 candidate boxes, filtered at confidence 0.25 with non-maximum suppression (IoU 0.45). Because this model was not trained on local roads, a local dataset will be recorded, labelled and used to fine-tune it, and both versions will be compared on a held-out test set.</p>
+
+<h3>5.2 On-device decision rules</h3>
+<table>
+  <tr><th style="width:27%">Step</th><th>Rule</th><th style="width:30%">Purpose</th></tr>
+  <tr><td>Frame confirmation</td><td>Pothole seen in 2 of 3 consecutive frames</td><td>Remove one-frame false hits</td></tr>
+  <tr><td>Report checks</td><td>Confidence ≥ 0.55; 3.5 s cooldown; no repeat within 10 m / 60 s</td><td>Avoid weak and repeated reports</td></tr>
+  <tr><td>Severity</td><td>Box size relative to the frame, plus confidence → Low / Medium / High</td><td>Help prioritise repairs</td></tr>
+  <tr><td>Location check</td><td>GPS fix not older than 30 s and within 50 m accuracy</td><td>Never report at a guessed location</td></tr>
+  <tr><td>Driver warning</td><td>Voice and vibration; only for potholes ahead (within 65° of heading)</td><td>Immediate safety benefit, offline</td></tr>
+</table>
+<div class="num">2</div>
+</section>
+
+<!-- ================= PAGE 4 ================= -->
+<section class="page">
+<h3 style="margin-top:0">5.3 Offline storage and duplicate merging</h3>
+<p>Every confirmed detection is first saved in a local Room database with a unique ID, so nothing is lost without network coverage. A background WorkManager job uploads pending reports with retry and backoff. On the server, a Firebase transaction looks for an existing pothole within a radius of 10 to 25 m (depending on GPS accuracy) and either merges the new detection into it or creates a new report. Each pass is still kept as a separate detection record as evidence.</p>
+
+<h3>5.4 Repair workflow and security</h3>
+<p>A report moves through nine stages: <i>New, Under Review, Verified, Assigned, Accepted, In Progress, Repair Submitted, City Verification</i> and <i>Resolved</i>, with branches for rejected, declined and re-done repairs. Firebase security rules decide who may make each change: new users are always citizens, contractors can act only on their own jobs, and only the City Corporation can close a report. Every change is written to an append-only activity log with the person, time and old and new status.</p>
+
+<h2>6. Current Status</h2>
+<table>
+  <tr><th style="width:38%">Component</th><th>Status</th></tr>
+  <tr><td>Android app (detection, warnings, outbox, maps)</td><td>Implemented and building; 4 of 4 unit tests pass; full device testing pending</td></tr>
+  <tr><td>Web dashboard (city, contractor, citizen)</td><td>Implemented; main workflow tested end-to-end on Firebase emulators</td></tr>
+  <tr><td>Database security rules</td><td>Rewritten; 17 of 17 automated tests pass</td></tr>
+  <tr><td>AI model export and quantization</td><td>Done; desktop benchmark recorded (INT8 average 76.9 ms on a development CPU)</td></tr>
+  <tr><td>Local dataset, retraining, accuracy results</td><td>Not started</td></tr>
+  <tr><td>Push notifications to other users</td><td>Not started</td></tr>
+</table>
+
+<h2>7. Work Plan</h2>
+<p>The remaining work is planned over 16 weeks (shaded cells in Table 1).</p>
+<table class="gantt">
+  <tr><th style="text-align:left">Phase</th><th colspan="4">Weeks 1–4</th><th colspan="4">Weeks 5–8</th><th colspan="4">Weeks 9–12</th><th colspan="4">Weeks 13–16</th></tr>
+  <tr><td>1. Deployment and device testing</td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>2. Dataset collection and labelling</td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>3. Model fine-tuning and evaluation</td><td></td><td></td><td></td><td></td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>4. Notifications and scalability</td><td></td><td></td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>5. Field pilot</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td><td></td></tr>
+  <tr><td>6. Analysis and final report</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td></tr>
+</table>
+<p class="cap">Table 1. Proposed 16-week schedule.</p>
+<div class="num">3</div>
+</section>
+
+<!-- ================= PAGE 5 ================= -->
+<section class="page">
+<h2 style="margin-top:0">8. Expected Outcomes and Evaluation</h2>
+<p>The project will deliver a tested Android app, a deployed web dashboard with security rules, a labelled local pothole dataset, a fine-tuned and quantized model, and a final report. The system will be evaluated as follows:</p>
+<table>
+  <tr><th style="width:27%">Area</th><th>How it will be measured</th></tr>
+  <tr><td>Detection accuracy</td><td>Precision, recall, F1 and mAP@0.5 on the local test set, baseline vs. fine-tuned model</td></tr>
+  <tr><td>Speed on the phone</td><td>Average and 95th-percentile inference time on real mid-range phones</td></tr>
+  <tr><td>Report quality</td><td>Share of pilot reports that are real potholes, checked by hand</td></tr>
+  <tr><td>Duplicates and sync</td><td>Duplicate potholes after repeated passes; reports lost or repeated after network loss</td></tr>
+  <tr><td>Workflow and security</td><td>Every report traceable in the audit log; all rule tests passing</td></tr>
+</table>
+
+<h2>9. Risks and Mitigation</h2>
+<ul>
+  <li><b>Low accuracy on local roads:</b> fine-tune on a local dataset; the city verifies every report before repair.</li>
+  <li><b>Slow on low-end phones:</b> INT8 model, skip frames when needed, and set a minimum supported device.</li>
+  <li><b>Poor GPS in dense areas:</b> reject stale or inaccurate fixes and use an adaptive merge radius.</li>
+  <li><b>Driver distraction:</b> hands-free voice alerts only; the phone must be mounted.</li>
+</ul>
+
+<h2>10. Tools and Ethics</h2>
+<p>The project uses Kotlin, CameraX, ONNX Runtime Mobile, Room and WorkManager on Android; Firebase Authentication, Realtime Database and Cloud Functions; and Next.js, React, Leaflet and OpenStreetMap for the web. All are free or have a free tier. No images are uploaded in normal use; frames recorded for the dataset will have faces and number plates blurred, and pilot participants will take part with informed consent.</p>
+
+<h2>11. Conclusion</h2>
+<p>SmartPothole AI combines on-device AI, offline-first mobile design and a secure, auditable workflow into one practical road-maintenance system. The prototype shows that the design works; the proposed 16-week plan will measure how well it works on local roads and real phones and deliver a validated system and dataset.</p>
+
+<h2>References</h2>
+<ol style="font-size:10pt;margin-top:0">
+  <li style="font-size:10pt;line-height:1.35">G. Jocher, A. Chaurasia and J. Qiu, “Ultralytics YOLOv8,” 2023. github.com/ultralytics/ultralytics</li>
+  <li style="font-size:10pt;line-height:1.35">Microsoft, “ONNX Runtime,” onnxruntime.ai</li>
+  <li style="font-size:10pt;line-height:1.35">M. O. Ali, I. Jahan, R. B. Mofidul and Y. M. Jang, “Pothole Detection Using Optical Camera Communication,” in Proc. ICAIIC, 2022.</li>
+  <li style="font-size:10pt;line-height:1.35">M. R. Tanvir, “Local Pothole Detection Using Deep Learning Algorithms,” B.Sc. report, Daffodil International University, 2024.</li>
+  <li style="font-size:10pt;line-height:1.35">Google, “Firebase Realtime Database and Security Rules,” firebase.google.com/docs</li>
+</ol>
+<div class="num">4</div>
+</section>
+
+</body>
+</html>

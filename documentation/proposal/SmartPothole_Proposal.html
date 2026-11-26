@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartPothole Project Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B1B33;--text:#1E293B;--muted:#475569;--line:#D5DBE4;--soft:#F4F6F9;--orange:#C2410C;--teal:#0E7490;--green:#15803D;--blue:#1D4ED8;--red:#B91C1C;--amber:#B45309}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#CBD2DC;font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--text);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;margin:24px auto;background:#fff;position:relative;overflow:hidden;padding:20mm 19mm 20mm;box-shadow:0 10px 40px rgba(11,27,51,.25)}
+@page{size:A4;margin:0}
+@media print{html,body{background:#fff}.page{margin:0;box-shadow:none;break-after:page}.page:last-child{break-after:auto}}
+.run{position:absolute;top:9mm;left:19mm;right:19mm;display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;border-bottom:1px solid #E2E8F0;padding-bottom:5px}
+.run b{color:var(--orange);font-weight:700}
+.foot{position:absolute;bottom:9mm;left:19mm;right:19mm;display:flex;justify-content:space-between;font-size:8.5px;color:#94A3B8}
+h2{font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin:0 0 8px;display:flex;align-items:baseline;gap:10px}
+h2 .no{color:var(--orange);font-size:13px;font-weight:800;min-width:22px}
+h3{font-size:12.5px;font-weight:700;color:var(--ink);margin:14px 0 5px}
+p,li,td{font-family:"Source Serif 4",Georgia,serif;font-size:11.3px;line-height:1.62;color:var(--text)}
+p+p{margin-top:7px}
+section.s{margin-bottom:18px}
+ul.b,ol.b{padding-left:18px;margin-top:5px}
+ul.b li,ol.b li{margin-bottom:3px}
+ul.b li::marker{color:var(--orange)}
+ol.b li::marker{color:var(--orange);font-family:Inter;font-weight:700;font-size:10px}
+.mono{font-family:"JetBrains Mono",Menlo,monospace;font-size:.88em}
+strong{font-weight:600;color:var(--ink)}
+table.t{width:100%;border-collapse:collapse;margin-top:8px}
+table.t th{font-family:Inter;font-size:9.8px;font-weight:700;text-align:left;color:#fff;background:var(--ink);padding:6px 8px}
+table.t td{font-size:10.3px;line-height:1.45;padding:6px 8px;border-bottom:1px solid #E5E9EF;vertical-align:top}
+table.t tr:nth-child(even) td{background:#F8FAFC}
+table.t td:first-child{font-family:Inter;font-weight:600;color:var(--ink);font-size:10px}
+.box{border-left:3px solid var(--orange);background:#FFF7ED;padding:10px 13px;border-radius:0 8px 8px 0;margin-top:10px}
+.box.teal{border-color:var(--teal);background:#ECFEFF}
+.box p{font-size:10.8px}
+.cap{font-family:Inter;font-size:9px;color:#64748B;margin-top:5px;text-align:center}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.kv div{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.kv b{display:block;font-size:17px;font-weight:800;color:var(--ink)}
+.kv span{font-size:9px;color:var(--muted);line-height:1.35;display:block;margin-top:2px}
+.tag{font-family:Inter;font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.ok{background:#DCFCE7;color:#166534}.wip{background:#FEF3C7;color:#92400E}.todo{background:#E2E8F0;color:#334155}
+svg text{font-family:Inter,-apple-system,sans-serif}
+
+/* cover */
+.cover{padding:0;background:#fff}
+.cover .band{background:linear-gradient(160deg,#0B1B33 0%,#13294B 70%,#1C3A66 100%);color:#fff;padding:22mm 19mm 16mm;height:170mm;position:relative;overflow:hidden}
+.cover .band::after{content:"";position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(251,146,60,.35),transparent 70%)}
+.cover .label{font-size:10.5px;font-weight:700;letter-spacing:.22em;color:#FB923C;text-transform:uppercase}
+.cover h1{font-size:40px;line-height:1.08;font-weight:800;letter-spacing:-.025em;margin-top:14px;max-width:560px}
+.cover .sub{font-family:"Source Serif 4",Georgia,serif;font-size:15px;line-height:1.5;color:#CBD5E1;margin-top:14px;max-width:540px}
+.cover .meta{padding:13mm 19mm 0;display:grid;grid-template-columns:1fr 1fr;gap:12px 30px}
+.cover .meta div{border-bottom:1px solid var(--line);padding-bottom:9px}
+.cover .meta small{display:block;font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#94A3B8}
+.cover .meta span{display:block;font-size:12.5px;color:var(--ink);margin-top:5px;min-height:17px;font-weight:500}
+.toc{list-style:none;margin-top:10px}
+.toc li{font-family:Inter;font-size:11px;display:flex;gap:10px;padding:5px 0;border-bottom:1px dotted #CBD5E1;color:var(--text)}
+.toc li b{color:var(--orange);width:20px}
+.toc li i{margin-left:auto;font-style:normal;color:#94A3B8}
+
+/* gantt */
+.gantt{display:grid;grid-template-columns:150px repeat(16,1fr);margin-top:10px;font-family:Inter;font-size:9px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.gantt div{border-bottom:1px solid #EDF0F4;padding:6px 0;min-height:26px;position:relative}
+.gantt .h{background:var(--ink);color:#fff;text-align:center;font-weight:700;padding:5px 0;min-height:0}
+.gantt .h.l{text-align:left;padding-left:9px}
+.gantt .n{padding:6px 9px;font-weight:600;color:var(--ink);font-size:9.5px;line-height:1.3}
+.gantt .c{border-left:1px solid #F1F5F9}.gantt .c.on{border-left-color:transparent}
+.gantt .on::after{content:"";position:absolute;left:0;right:0;top:8px;bottom:8px;background:var(--bar)}
+.gantt .on.s::after{left:3px;border-radius:5px 0 0 5px}.gantt .on.e::after{right:3px;border-radius:0 5px 5px 0}.gantt .on.s.e::after{border-radius:5px}
+.gantt .ms::after{content:"◆";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--orange);font-size:12px}
+.refs li{font-size:10px;line-height:1.5;margin-bottom:5px}
+</style>
+</head>
+<body>
+
+<!-- =============== COVER =============== -->
+<section class="page cover">
+  <div class="band">
+    <svg width="42" height="42" viewBox="0 0 34 34"><rect width="34" height="34" rx="9" fill="#FB923C"/><path d="M17 7c-4.4 0-8 3.4-8 7.7 0 5.6 8 12.3 8 12.3s8-6.7 8-12.3C25 10.4 21.4 7 17 7z" fill="#0B1B33"/><ellipse cx="17" cy="15" rx="3.6" ry="2.4" fill="#FB923C"/></svg>
+    <div class="label" style="margin-top:34px">Project Proposal</div>
+    <h1>SmartPothole AI: On-Device Pothole Detection and Civic Road-Maintenance Platform</h1>
+    <p class="sub">A privacy-preserving system that turns riders' smartphones into road inspectors and gives city authorities an accountable, end-to-end workflow from detection to verified repair.</p>
+    <svg viewBox="-45 0 730 120" width="100%" style="position:absolute;left:19mm;right:19mm;bottom:14mm;width:calc(100% - 38mm)">
+      <g font-size="10" font-weight="700" fill="#fff">
+        <g><circle cx="20" cy="40" r="18" fill="#FB923C"/><text x="20" y="44" text-anchor="middle" fill="#0B1B33">1</text><text x="20" y="80" text-anchor="middle">Detect</text></g>
+        <g><circle cx="140" cy="40" r="18" fill="#FB923C"/><text x="140" y="44" text-anchor="middle" fill="#0B1B33">2</text><text x="140" y="80" text-anchor="middle">Confirm</text></g>
+        <g><circle cx="260" cy="40" r="18" fill="#22D3EE"/><text x="260" y="44" text-anchor="middle" fill="#0B1B33">3</text><text x="260" y="80" text-anchor="middle">Sync</text></g>
+        <g><circle cx="380" cy="40" r="18" fill="#22D3EE"/><text x="380" y="44" text-anchor="middle" fill="#0B1B33">4</text><text x="380" y="80" text-anchor="middle">Triage</text></g>
+        <g><circle cx="500" cy="40" r="18" fill="#4ADE80"/><text x="500" y="44" text-anchor="middle" fill="#0B1B33">5</text><text x="500" y="80" text-anchor="middle">Repair</text></g>
+        <g><circle cx="620" cy="40" r="18" fill="#4ADE80"/><text x="620" y="44" text-anchor="middle" fill="#0B1B33">6</text><text x="620" y="80" text-anchor="middle">Verify</text></g>
+      </g>
+      <g stroke="rgba(255,255,255,.3)" stroke-width="2" stroke-dasharray="5 5"><path d="M42 40H118M162 40H238M282 40H358M402 40H478M522 40H598"/></g>
+      <g font-size="8.5" fill="#94A3B8"><text x="20" y="95" text-anchor="middle">YOLOv8 on phone</text><text x="140" y="95" text-anchor="middle">frames · GPS</text><text x="260" y="95" text-anchor="middle">offline outbox</text><text x="380" y="95" text-anchor="middle">city engineer</text><text x="500" y="95" text-anchor="middle">contractor</text><text x="620" y="95" text-anchor="middle">city closes</text></g>
+    </svg>
+  </div>
+  <div class="meta">
+    <div><small>Prepared by</small><span>&nbsp;</span></div>
+    <div><small>Student ID / Role</small><span>&nbsp;</span></div>
+    <div><small>Supervisor</small><span>&nbsp;</span></div>
+    <div><small>Department / Institution</small><span>&nbsp;</span></div>
+    <div><small>Submitted to</small><span>&nbsp;</span></div>
+    <div><small>Date</small><span>November 2026</span></div>
+  </div>
+  <div style="padding:11mm 19mm 0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+    <div style="font-family:Inter;font-size:9.5px;color:var(--muted)"><b style="display:block;color:var(--ink);font-size:11px">Android</b>Kotlin · CameraX · ONNX Runtime</div>
+    <div style="font-family:Inter;font-size:9.5px;color:var(--muted)"><b style="display:block;color:var(--ink);font-size:11px">AI model</b>YOLOv8s · INT8 · 10.96 MB</div>
+    <div style="font-family:Inter;font-size:9.5px;color:var(--muted)"><b style="display:block;color:var(--ink);font-size:11px">Backend</b>Firebase Auth · Realtime DB</div>
+    <div style="font-family:Inter;font-size:9.5px;color:var(--muted)"><b style="display:block;color:var(--ink);font-size:11px">Web</b>Next.js · Leaflet · OpenStreetMap</div>
+  </div>
+  <div style="margin:9mm 19mm 0;padding:12px 15px;background:#F4F6F9;border-radius:10px;border-left:3px solid var(--orange)">
+    <div style="font-family:Inter;font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--orange)">Proposal at a glance</div>
+    <p style="font-size:10.8px;margin-top:5px">A working prototype exists. This proposal covers 16 weeks to test it on real phones, build a local labelled dataset, retrain and evaluate the model, add server-side notifications, and run a field pilot with measured results.</p>
+  </div>
+</section>
+
+<!-- =============== PAGE 2: EXEC SUMMARY + TOC =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Executive summary</span></div>
+
+  <section class="s">
+    <h2>Executive Summary</h2>
+    <p>Potholes are a persistent hazard on urban and highway roads, especially for two-wheelers, rickshaws and public transport. Today they are found mostly through manual inspection or scattered public complaints, which are slow, inconsistently located, and rarely tracked through to a confirmed repair.</p>
+    <p><strong>SmartPothole AI</strong> proposes an end-to-end platform that closes this gap. A rider mounts an Android phone on the dashboard; a quantized YOLOv8 model detects potholes <em>on the device</em> in real time, warns the driver by voice and vibration, and sends only a small JSON record — class, confidence, GPS position and time — to a Firebase backend. No camera image or video ever leaves the phone. Reports from many vehicles are merged into one record per physical pothole, and a role-based web dashboard lets the City Corporation triage, assign, and finally close each repair, while contractors see and update only their own jobs.</p>
+    <p>A working prototype already exists: the Android app, web dashboard, database security rules and AI export pipeline are implemented, and the core web workflow and 17 security-rule tests pass on Firebase emulators. This proposal requests support to complete the remaining work over <strong>16 weeks</strong>: on-device validation, a locally collected and labelled dataset, model retraining and evaluation, server-side notifications, and a small field pilot with measurable outcomes.</p>
+    <div class="kv">
+      <div><b>10.96 MB</b><span>INT8 model, 74.3% smaller than ONNX FP32</span></div>
+      <div><b>0</b><span>images or video uploaded; metadata only</span></div>
+      <div><b>3 roles</b><span>rider/citizen, City Corporation, contractor</span></div>
+      <div><b>16 weeks</b><span>proposed plan to field pilot and final report</span></div>
+    </div>
+  </section>
+
+  <section class="s">
+    <h2>Contents</h2>
+    <ul class="toc">
+      <li><b>1</b>Background and Problem Statement<i>3</i></li>
+      <li><b>2</b>Aim and Objectives<i>3</i></li>
+      <li><b>3</b>Proposed Solution<i>4</i></li>
+      <li><b>4</b>Methodology<i>5</i></li>
+      <li><b>5</b>Current Status of the Prototype<i>6</i></li>
+      <li><b>6</b>Work Plan and Timeline<i>7</i></li>
+      <li><b>7</b>Deliverables<i>7</i></li>
+      <li><b>8</b>Evaluation Plan and Success Criteria<i>8</i></li>
+      <li><b>9</b>Risks and Mitigation<i>8</i></li>
+      <li><b>10</b>Resources, Ethics and Privacy<i>9</i></li>
+      <li><b>11</b>Conclusion and References<i>9</i></li>
+    </ul>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>2</span></div>
+</section>
+
+<!-- =============== PAGE 3: PROBLEM + OBJECTIVES =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Problem &amp; objectives</span></div>
+
+  <section class="s">
+    <h2><span class="no">1</span>Background and Problem Statement</h2>
+    <p>Road surface damage grows quickly after heavy rain and heavy traffic. A pothole that is not repaired early causes vehicle damage, sudden braking and swerving, and accidents — with the greatest risk to motorcycles, bicycles and rickshaws. Municipal bodies are responsible for repair but usually lack an up-to-date, accurate picture of where defects are and how serious they are.</p>
+    <h3>Gaps in current practice</h3>
+    <ul class="b">
+      <li><strong>Slow, manual discovery.</strong> Defects are found by periodic inspection or by complaints that arrive late and with vague locations.</li>
+      <li><strong>No single source of truth.</strong> The same pothole is reported many times by different people, while others are never reported.</li>
+      <li><strong>Weak accountability.</strong> Once a job is handed to a contractor, there is often no auditable record of who verified, repaired and approved it.</li>
+      <li><strong>Privacy and cost barriers.</strong> Uploading road video from many phones is expensive in bandwidth and storage and captures people and number plates.</li>
+      <li><strong>No driver-side benefit.</strong> Existing reporting tools rarely warn the driver about a hazard ahead.</li>
+    </ul>
+    <div class="box"><p><strong>Problem statement.</strong> There is no low-cost, privacy-preserving system that automatically detects potholes from ordinary vehicles, de-duplicates the reports into reliable geolocated records, and manages each defect through an auditable repair workflow between citizens, the city authority and contractors.</p></div>
+  </section>
+
+  <section class="s">
+    <h2><span class="no">2</span>Aim and Objectives</h2>
+    <p><strong>Aim:</strong> to design, build and evaluate a smartphone-based, on-device AI system for pothole detection that is connected to a secure, role-based civic road-maintenance workflow.</p>
+    <h3>Specific objectives</h3>
+    <ol class="b">
+      <li>Run a lightweight YOLOv8 pothole detector in real time on mid-range Android phones, with no image upload.</li>
+      <li>Reduce false and duplicate reports through temporal confirmation, confidence and spatial gates, and fresh-GPS requirements.</li>
+      <li>Warn drivers immediately, offline, with voice and haptic alerts that are aware of travel direction.</li>
+      <li>Merge detections from many vehicles into one record per physical pothole using concurrency-safe transactions.</li>
+      <li>Provide a role-gated web dashboard and a nine-stage, fully audited repair lifecycle enforced by database rules.</li>
+      <li>Collect and label a local road dataset, retrain the model, and report precision, recall, mAP and on-device latency.</li>
+      <li>Validate the complete system in a small field pilot and document the results.</li>
+    </ol>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>3</span></div>
+</section>
+
+<!-- =============== PAGE 4: SOLUTION =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Proposed solution</span></div>
+  <section class="s">
+    <h2><span class="no">3</span>Proposed Solution</h2>
+    <p>The platform has three parts connected through a serverless, real-time backend. Intelligence sits at the edge (the phone), authority sits in the database security rules, and each human role gets a scoped interface.</p>
+
+    <svg viewBox="0 0 620 250" width="100%" style="margin-top:12px">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker></defs>
+      <rect x="0" y="0" width="180" height="250" rx="12" fill="#ECFEFF" stroke="#A5E4EF"/>
+      <rect x="220" y="0" width="180" height="250" rx="12" fill="#FFF7ED" stroke="#FCD3B0"/>
+      <rect x="440" y="0" width="180" height="250" rx="12" fill="#EFF6FF" stroke="#BFD3FB"/>
+      <g font-size="12" font-weight="800"><text x="14" y="24" fill="#0E7490">Android app (rider)</text><text x="234" y="24" fill="#C2410C">Firebase backend</text><text x="454" y="24" fill="#1D4ED8">Web dashboard</text></g>
+      <g font-size="10" fill="#1E293B">
+        <g><rect x="12" y="38" width="156" height="30" rx="7" fill="#fff" stroke="#A5E4EF"/><text x="22" y="57">CameraX live analysis</text></g>
+        <g><rect x="12" y="74" width="156" height="30" rx="7" fill="#0E7490"/><text x="22" y="93" fill="#fff" font-weight="700">YOLOv8s INT8 (ONNX)</text></g>
+        <g><rect x="12" y="110" width="156" height="30" rx="7" fill="#fff" stroke="#A5E4EF"/><text x="22" y="129">Confirm · gate · severity</text></g>
+        <g><rect x="12" y="146" width="156" height="30" rx="7" fill="#fff" stroke="#A5E4EF"/><text x="22" y="165">Voice + haptic warning</text></g>
+        <g><rect x="12" y="182" width="156" height="30" rx="7" fill="#fff" stroke="#A5E4EF"/><text x="22" y="201">Room outbox + sync</text></g>
+        <g><rect x="12" y="218" width="156" height="24" rx="7" fill="#fff" stroke="#A5E4EF"/><text x="22" y="234" font-size="9.5">Map · live companion</text></g>
+
+        <g><rect x="232" y="38" width="156" height="30" rx="7" fill="#fff" stroke="#FCD3B0"/><text x="242" y="57">Authentication</text></g>
+        <g><rect x="232" y="74" width="156" height="100" rx="7" fill="#C2410C"/><text x="242" y="93" fill="#fff" font-weight="700">Realtime Database</text>
+          <g fill="#FFEDD5" font-size="9.5" class="mono"><text x="242" y="111">reports/  detections/</text><text x="242" y="127">users/  activity_logs/</text><text x="242" y="143">live_sessions/</text><text x="242" y="161" font-family="Inter" font-size="9">real-time sync</text></g></g>
+        <g><rect x="232" y="182" width="156" height="30" rx="7" fill="#fff" stroke="#FCD3B0"/><text x="242" y="201">Role-based security rules</text></g>
+        <g><rect x="232" y="218" width="156" height="24" rx="7" fill="#fff" stroke="#FCD3B0"/><text x="242" y="234" font-size="9.5">Cloud Function · FCM push</text></g>
+
+        <g><rect x="452" y="38" width="156" height="30" rx="7" fill="#fff" stroke="#BFD3FB"/><text x="462" y="57">Login · role guard</text></g>
+        <g><rect x="452" y="74" width="156" height="30" rx="7" fill="#1D4ED8"/><text x="462" y="93" fill="#fff" font-weight="700">City Corporation desk</text></g>
+        <g><rect x="452" y="110" width="156" height="30" rx="7" fill="#fff" stroke="#BFD3FB"/><text x="462" y="129">Contractor job portal</text></g>
+        <g><rect x="452" y="146" width="156" height="30" rx="7" fill="#fff" stroke="#BFD3FB"/><text x="462" y="165">Citizen map &amp; reports</text></g>
+        <g><rect x="452" y="182" width="156" height="60" rx="7" fill="#fff" stroke="#BFD3FB"/><text x="462" y="201">Leaflet + OpenStreetMap</text><text x="462" y="217" font-size="9" fill="#475569">status-coloured markers,</text><text x="462" y="231" font-size="9" fill="#475569">filters and clustering</text></g>
+      </g>
+      <g stroke="#475569" stroke-width="1.6" fill="none">
+        <path d="M168 197 C 200 197, 200 124, 230 124" marker-end="url(#a)"/>
+        <path d="M232 230 C 205 230, 200 230, 170 230" marker-end="url(#a)"/>
+        <path d="M390 124 L450 89" marker-end="url(#a)"/>
+        <path d="M450 125 L392 140" marker-end="url(#a)"/>
+      </g>
+      <g font-size="8.5" fill="#475569" font-weight="600"><text x="196" y="150" text-anchor="middle" transform="rotate(-62 196 150)">JSON metadata</text></g>
+    </svg>
+    <p class="cap">Figure 1. System architecture. Arrows carry structured data only; camera frames never leave the phone.</p>
+
+    <h3>Key features</h3>
+    <ul class="b">
+      <li><strong>Edge AI with zero image upload:</strong> detection, severity and warnings run on the phone; only coordinates, confidence and time are sent.</li>
+      <li><strong>Offline-first:</strong> every report is stored in a local Room database first and synced by WorkManager when the network returns, idempotently.</li>
+      <li><strong>Smart de-duplication:</strong> repeated passes update one pothole record; each pass is kept as an immutable detection for evidence.</li>
+      <li><strong>Live Companion Mode:</strong> others can follow a scanning vehicle's position and detections in real time — without video.</li>
+      <li><strong>Open, free mapping:</strong> OpenStreetMap / OpenFreeMap tiles, so there are no map API keys or billing.</li>
+    </ul>
+
+    <h3>Stakeholders and benefits</h3>
+    <table class="t">
+      <tr><th style="width:24%">Stakeholder</th><th>What they do in the system</th><th style="width:32%">Benefit</th></tr>
+      <tr><td>Rider / citizen</td><td>Scans roads while driving; views own reports and the pothole map</td><td>Hazard warnings ahead; visible response to reports</td></tr>
+      <tr><td>City Corporation</td><td>Triages, verifies, assigns with deadlines, inspects and closes</td><td>Accurate, de-duplicated defect map and audit trail</td></tr>
+      <tr><td>Contractor</td><td>Accepts assigned jobs, updates progress, submits repair evidence</td><td>Clear work orders; cannot be confused with others' jobs</td></tr>
+    </table>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>4</span></div>
+</section>
+
+<!-- =============== PAGE 5: METHODOLOGY =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Methodology</span></div>
+  <section class="s">
+    <h2><span class="no">4</span>Methodology</h2>
+    <p>The work follows an iterative engineering methodology: build a working baseline, measure it against defined metrics, and improve the weakest component in each cycle. Four technical streams run in parallel.</p>
+
+    <h3>4.1 Detection model</h3>
+    <p>The baseline is a single-class YOLOv8s detector (11.1 M parameters, 28.4 GFLOPs at 640×640) obtained as a public pretrained checkpoint. It is exported to ONNX and dynamically quantized to INT8, reducing size from 42.67 MB to 10.96 MB. Input is a <span class="mono">[1, 3, 640, 640]</span> normalised tensor; output is <span class="mono">[1, 5, 8400]</span> candidate boxes, filtered at confidence 0.25 and non-max suppression IoU 0.45. Because the baseline was not trained on local roads and no labelled validation set exists yet, this project will <strong>collect and annotate a local dataset</strong> (varied lighting, rain, road types, camera heights), fine-tune the model, and compare baseline and fine-tuned versions on a held-out test split.</p>
+
+    <h3>4.2 On-device decision pipeline</h3>
+    <table class="t">
+      <tr><th style="width:26%">Stage</th><th>Rule</th><th style="width:32%">Purpose</th></tr>
+      <tr><td>Temporal confirmation</td><td>Pothole present in 2 of 3 consecutive analysed frames</td><td>Remove single-frame false positives</td></tr>
+      <tr><td>Report gates</td><td>Confidence ≥ 0.55; 3.5 s cooldown; 10 m / 60 s same-spot gate</td><td>Avoid weak and repeated reports</td></tr>
+      <tr><td>Severity</td><td>Box-area ratio and confidence → LOW / MEDIUM / HIGH</td><td>Prioritise repairs</td></tr>
+      <tr><td>Location quality</td><td>GPS fix ≤ 30 s old and ≤ 50 m accuracy, else not reported</td><td>Never file a report at a guessed position</td></tr>
+      <tr><td>Driver warning</td><td>Voice + haptic; "ahead" if within 65° of heading</td><td>Immediate, offline safety benefit</td></tr>
+    </table>
+
+    <h3>4.3 Data synchronisation and de-duplication</h3>
+    <p>Each confirmed detection receives a client UUID and is written to the Room outbox. A unique WorkManager job uploads pending rows with exponential backoff. On the server side, a Firebase transaction searches a bounded latitude band and merges the detection into an existing pothole within <span class="mono">clamp(GPS accuracy, 10 m, 25 m)</span>, otherwise it creates a new report. This keeps one record per physical defect while preserving every pass as evidence.</p>
+
+    <h3>4.4 Workflow, security and governance</h3>
+    <p>Reports move through nine stages — <span class="mono">NEW → UNDER_REVIEW → VERIFIED → ASSIGNED → ACCEPTED → IN_PROGRESS → REPAIR_SUBMITTED → CITY_VERIFICATION → RESOLVED</span> — with rejection, declined-assignment and repair-rejected branches. Firebase security rules, not the user interface, decide who may perform each transition: self-registration always creates a citizen, contractors can act only on their own jobs, only the city can close a report, and every change appends an attributed entry to <span class="mono">activity_logs/</span>. The rules are verified by automated emulator tests.</p>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>5</span></div>
+</section>
+
+<!-- =============== PAGE 6: STATUS =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Current status</span></div>
+  <section class="s">
+    <h2><span class="no">5</span>Current Status of the Prototype</h2>
+    <p>A substantial prototype has been built and audited (November 2026). The table separates what is verified from what is implemented but not yet tested, so the proposed work can focus on the real gaps.</p>
+    <table class="t">
+      <tr><th style="width:30%">Component</th><th>Status detail</th><th style="width:15%">State</th></tr>
+      <tr><td>Database security rules</td><td>Rewritten; 17 automated emulator tests all pass (no self-promotion, scoped transitions, append-only logs)</td><td><span class="tag ok">Tested</span></td></tr>
+      <tr><td>Web dashboard &amp; routing</td><td>Role-gated routes for city, contractor, citizen; real authentication; no fabricated data</td><td><span class="tag ok">Tested</span></td></tr>
+      <tr><td>End-to-end web workflow</td><td>Citizen report → city verify → assign → contractor sees only own job and accepts</td><td><span class="tag ok">Tested</span></td></tr>
+      <tr><td>Username login function</td><td>Callable Cloud Function with lockout after repeated failures</td><td><span class="tag ok">Tested</span></td></tr>
+      <tr><td>Android build &amp; unit tests</td><td>App compiles; 4 / 4 JVM unit tests pass</td><td><span class="tag ok">Tested</span></td></tr>
+      <tr><td>AI export &amp; quantisation</td><td>ONNX FP32 and INT8 exports, desktop benchmark recorded</td><td><span class="tag ok">Done</span></td></tr>
+      <tr><td>Android auth, outbox, detection pipeline</td><td>Implemented and building; needs testing on a physical phone</td><td><span class="tag wip">Needs device test</span></td></tr>
+      <tr><td>Live Companion Mode</td><td>Sessions, join codes, live position and detections implemented</td><td><span class="tag wip">Needs device test</span></td></tr>
+      <tr><td>Production deployment</td><td>Rules and function ready; requires project credentials and Blaze plan</td><td><span class="tag wip">Blocked</span></td></tr>
+      <tr><td>Push notifications to others</td><td>Tokens stored; server-side sender not yet written</td><td><span class="tag todo">To do</span></td></tr>
+      <tr><td>Local dataset &amp; retraining</td><td>No labelled validation set yet; accuracy not measured</td><td><span class="tag todo">To do</span></td></tr>
+      <tr><td>On-phone latency benchmark</td><td>Only desktop CPU latency known (INT8 avg 76.9 ms)</td><td><span class="tag todo">To do</span></td></tr>
+      <tr><td>Scalability</td><td>Report list downloaded in full; needs paging / geo-query</td><td><span class="tag todo">To do</span></td></tr>
+    </table>
+    <div class="box teal"><p><strong>Implication.</strong> The software foundation is in place and largely verified. The main open questions are empirical — how accurate the detector is on local roads, how fast it runs on real phones, and how the full system behaves in the field — which is exactly what the proposed plan addresses.</p></div>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>6</span></div>
+</section>
+
+<!-- =============== PAGE 7: PLAN + DELIVERABLES =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Work plan</span></div>
+  <section class="s">
+    <h2><span class="no">6</span>Work Plan and Timeline</h2>
+    <p>The remaining work is organised into six phases over 16 weeks. Phases overlap where they do not depend on each other; milestones (◆) mark review points.</p>
+    <div class="gantt" id="gantt"></div>
+    <p class="cap">Figure 2. Proposed 16-week schedule (W = week).</p>
+
+    <table class="t" style="margin-top:12px">
+      <tr><th style="width:30%">Phase</th><th>Main activities</th></tr>
+      <tr><td>P1 · Deploy &amp; device test</td><td>Deploy rules and function; install on 2–3 Android phones; test auth, outbox, sync and warnings; fix defects</td></tr>
+      <tr><td>P2 · Dataset</td><td>Record dashboard video on varied roads and conditions; extract frames; annotate potholes; split train / validation / test</td></tr>
+      <tr><td>P3 · Model</td><td>Evaluate baseline; fine-tune YOLOv8s; compare FP32 vs INT8; measure latency on phones; select release model</td></tr>
+      <tr><td>P4 · Features</td><td>Server push notifications for new and nearby potholes; paging / geo-queries; public read-only safety map</td></tr>
+      <tr><td>P5 · Field pilot</td><td>Run the full system on a defined route with several riders and city/contractor test users; collect logs and feedback</td></tr>
+      <tr><td>P6 · Analysis &amp; report</td><td>Analyse metrics, write final report / paper, prepare demonstration and handover documentation</td></tr>
+    </table>
+  </section>
+
+  <section class="s">
+    <h2><span class="no">7</span>Deliverables</h2>
+    <ol class="b">
+      <li>Tested Android application (APK) with on-device detection, warnings, offline sync and Live Companion Mode.</li>
+      <li>Deployed web dashboard for City Corporation, contractors and citizens, with deployed security rules.</li>
+      <li>Annotated local pothole dataset and the fine-tuned, quantised detection model with its evaluation report.</li>
+      <li>Field-pilot report with detection, de-duplication, latency and workflow measurements.</li>
+      <li>Final project report / research paper, source code, and setup and deployment documentation.</li>
+    </ol>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>7</span></div>
+</section>
+
+<!-- =============== PAGE 8: EVAL + RISKS =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Evaluation &amp; risks</span></div>
+  <section class="s">
+    <h2><span class="no">8</span>Evaluation Plan and Success Criteria</h2>
+    <p>Every objective is tied to a measurable indicator. Targets below are proposed and will be finalised with the supervisor after the baseline measurements in Phase 3.</p>
+    <table class="t">
+      <tr><th style="width:26%">Area</th><th>Metric</th><th style="width:32%">Proposed target</th></tr>
+      <tr><td>Detection accuracy</td><td>Precision, recall, F1, mAP@0.5 on the local held-out test set</td><td>Fine-tuned model improves on baseline; results reported for both</td></tr>
+      <tr><td>Report reliability</td><td>Share of filed reports that are real potholes (pilot, manually checked)</td><td>Measured and reported; false reports reduced by the gates</td></tr>
+      <tr><td>On-device speed</td><td>Average and P95 inference latency, frames analysed per second</td><td>Real-time use on a mid-range phone without blocking preview</td></tr>
+      <tr><td>Model footprint</td><td>Model size and app memory use</td><td>INT8 model ≤ 11 MB; no native memory growth</td></tr>
+      <tr><td>De-duplication</td><td>Duplicate physical potholes in the database after repeated passes</td><td>One record per pothole in the pilot area</td></tr>
+      <tr><td>Offline sync</td><td>Reports lost or duplicated after network loss</td><td>Zero lost, zero duplicated</td></tr>
+      <tr><td>Security</td><td>Automated rule tests; unauthorised transitions blocked</td><td>All rule tests pass after every change</td></tr>
+      <tr><td>Workflow</td><td>Time from report to assignment and to closure in the pilot</td><td>Every report traceable end-to-end in the audit log</td></tr>
+      <tr><td>Usability</td><td>Short questionnaire for riders and city users</td><td>Feedback collected and summarised</td></tr>
+    </table>
+  </section>
+
+  <section class="s">
+    <h2><span class="no">9</span>Risks and Mitigation</h2>
+    <table class="t">
+      <tr><th style="width:30%">Risk</th><th style="width:14%">Impact</th><th>Mitigation</th></tr>
+      <tr><td>Model accuracy is low on local roads</td><td>High</td><td>Local dataset and fine-tuning; temporal and confidence gates; city verification before any repair work</td></tr>
+      <tr><td>Inference too slow on low-end phones</td><td>Medium</td><td>INT8 model, analyse every n-th frame, NNAPI / thread tuning; set a minimum supported device</td></tr>
+      <tr><td>Poor GPS accuracy in dense areas</td><td>Medium</td><td>Fresh-fix rule (≤ 30 s, ≤ 50 m); adaptive 10–25 m merge radius; never report without a fix</td></tr>
+      <tr><td>Driver distraction</td><td>High</td><td>Voice and haptic alerts, no interaction needed while moving; phone mounted, not handheld</td></tr>
+      <tr><td>Cloud cost or quota limits</td><td>Low</td><td>Metadata-only payloads; free-tier usage during pilot; paging before scale-up</td></tr>
+      <tr><td>Delays in data collection or deployment access</td><td>Medium</td><td>Start dataset in week 2 in parallel; use emulators until production credentials are available</td></tr>
+    </table>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>8</span></div>
+</section>
+
+<!-- =============== PAGE 9: RESOURCES, ETHICS, CONCLUSION, REFS =============== -->
+<section class="page">
+  <div class="run"><span><b>SmartPothole AI</b> · Project Proposal</span><span>Resources &amp; conclusion</span></div>
+  <section class="s">
+    <h2><span class="no">10</span>Resources, Ethics and Privacy</h2>
+    <table class="t">
+      <tr><th style="width:30%">Resource</th><th>Use</th><th style="width:28%">Cost basis</th></tr>
+      <tr><td>2–3 Android phones + mounts</td><td>Device testing, latency benchmark, data collection, pilot</td><td>Existing / borrowed devices</td></tr>
+      <tr><td>GPU workstation or cloud notebook</td><td>Fine-tuning YOLOv8 on the local dataset</td><td>Lab machine or free tier</td></tr>
+      <tr><td>Firebase project</td><td>Auth, Realtime Database, Cloud Function, FCM</td><td>Free tier; Blaze (pay-as-you-go) for functions</td></tr>
+      <tr><td>Open-source software</td><td>YOLOv8, ONNX Runtime, Next.js, Leaflet, OpenStreetMap</td><td>Free and open source</td></tr>
+      <tr><td>Annotation tool</td><td>Bounding-box labelling of collected frames</td><td>Free open-source tool</td></tr>
+    </table>
+    <h3>Ethics and privacy</h3>
+    <ul class="b">
+      <li><strong>Privacy by design:</strong> no image or video is uploaded during normal use; only detection metadata is stored.</li>
+      <li><strong>Dataset collection:</strong> recorded frames are used only for training; faces and number plates will be blurred or excluded before any sharing.</li>
+      <li><strong>Data minimisation and access:</strong> detections are private to the reporter; profiles and live locations are visible only to authorised roles or session participants.</li>
+      <li><strong>Safety:</strong> the app is used only with a mounted phone, and alerts never require the driver to touch the screen.</li>
+      <li><strong>Consent:</strong> pilot participants will be informed of what is recorded and may withdraw at any time.</li>
+    </ul>
+  </section>
+
+  <section class="s">
+    <h2><span class="no">11</span>Conclusion</h2>
+    <p>SmartPothole AI combines edge AI, offline-first mobile engineering and a secure, auditable workflow into one practical system for road maintenance. The prototype shows that the architecture works; the proposed 16-week plan will measure how well it works on local roads and real phones, close the remaining feature gaps, and deliver a validated system and dataset that a city authority could adopt.</p>
+  </section>
+
+  <section class="s" style="margin-bottom:0">
+    <h2 style="font-size:15px">References</h2>
+    <ol class="b refs">
+      <li>G. Jocher, A. Chaurasia and J. Qiu, "Ultralytics YOLOv8," 2023. [Online]. Available: github.com/ultralytics/ultralytics</li>
+      <li>Microsoft, "ONNX Runtime: cross-platform, high-performance ML inferencing," onnxruntime.ai</li>
+      <li>peterhdd, "pothole-detection-yolov8" (pretrained model), Hugging Face Hub.</li>
+      <li>M. O. Ali, I. Jahan, R. B. Mofidul and Y. M. Jang, "Pothole Detection Using Optical Camera Communication," in Proc. ICAIIC, 2022.</li>
+      <li>M. R. Tanvir, "Local Pothole Detection Using Deep Learning Algorithms," B.Sc. project report, Dept. of CSE, Daffodil International University, 2024.</li>
+      <li>Google, "Firebase Realtime Database and Security Rules documentation," firebase.google.com/docs</li>
+      <li>Android Developers, "CameraX," "Room," and "WorkManager" guides, developer.android.com</li>
+      <li>OpenStreetMap contributors, openstreetmap.org; Leaflet, leafletjs.com</li>
+    </ol>
+  </section>
+  <div class="foot"><span>SmartPothole AI — Project Proposal</span><span>9</span></div>
+</section>
+
+<script>
+// Gantt chart: [name, colour, startWeek, endWeek, milestoneWeek]
+const rows=[
+ ["P1 · Deploy & device test","#0E7490",1,3,3],
+ ["P2 · Dataset collection","#C2410C",2,6,6],
+ ["P3 · Model fine-tune & eval","#C2410C",6,10,10],
+ ["P4 · Notifications & scale","#1D4ED8",4,9,null],
+ ["P5 · Field pilot","#15803D",11,13,13],
+ ["P6 · Analysis & report","#7C3AED",13,16,16]];
+let h='<div class="h l">Phase</div>';
+for(let w=1;w<=16;w++)h+=`<div class="h">W${w}</div>`;
+for(const [n,c,s,e,m] of rows){
+  h+=`<div class="n">${n}</div>`;
+  for(let w=1;w<=16;w++){
+    const on=w>=s&&w<=e, ms=(w===m);
+    let cls='c'+(on?' on':'')+(w===s?' s':'')+(w===e?' e':'');
+    h+=`<div class="${cls}" style="--bar:${c}">${ms?'<span style="position:absolute;right:5px;top:50%;transform:translateY(-52%);color:#fff;font-size:9px;z-index:2">◆</span>':''}</div>`;
+  }
+}
+document.getElementById('gantt').innerHTML=h;
+</script>
+</body>
+</html>
