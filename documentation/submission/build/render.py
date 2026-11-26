@@ -478,13 +478,15 @@ def build(basename, cover, blocks, short_title):
 
 
 GITHUB_URL = "https://github.com/kazinayeem/smart-road-ai"
-LIVE_URL = "https://shorturl.at/Ok9CS"
-VIDEO_URL = "https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link"
+APK_URL = "https://shorturl.at/2Ssjl"
+VIDEO_URL = "https://shorturl.at/wMhFc"
+DASHBOARD_URL = "https://shorturl.at/tqoFD"
 
 LINKS = [
     ("GitHub repository", GITHUB_URL),
-    ("Live dashboard and Android app (APK) download", LIVE_URL),
-    ("Full project video overview (Google Drive)", VIDEO_URL),
+    ("Web dashboard (live)", DASHBOARD_URL),
+    ("Android app (APK) download", APK_URL),
+    ("Full project video", VIDEO_URL),
 ]
 
 

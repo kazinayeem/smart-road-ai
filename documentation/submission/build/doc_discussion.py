@@ -161,8 +161,8 @@ B = [
        "With Firebase, the security rules are the backend. Testing them early found two serious bugs.",
        "Designing for no network from the start was much easier than adding it later.",
        "Being clear about what is not finished (model evaluation on local roads) is better than overstating results."),
-    NOTE(f"**Result of these discussions.** Source code: {GITHUB_URL}  ·  Live dashboard and Android APK: {LIVE_URL}  "
-         f"·  Video overview: {VIDEO_URL}"),
+    NOTE(f"**Result of these discussions.** Source code: {GITHUB_URL}  ·  Web dashboard: {DASHBOARD_URL}  ·  "
+         f"Android APK: {APK_URL}  ·  Project video: {VIDEO_URL}"),
     SIGN("Mohammad Ali Nayeem", "Mubashir Alam", "Nayem Miah", "Dipta Dipayan Kar"),
 ]
 

@@ -125,8 +125,8 @@ B = [
       "have, and it gives drivers something back straight away in the form of warnings. Because the AI runs on the "
       "phone and only metadata is sent, the system is cheap to run and respects privacy. We believe it is a practical "
       "project for the semester, and a good base for a larger pilot with a City Corporation later."),
-    NOTE(f"**Prototype.** A working version already exists. Live dashboard and Android APK: {LIVE_URL}  ·  Video "
-         f"overview: {VIDEO_URL}  ·  Source code: {GITHUB_URL}"),
+    NOTE(f"**Prototype.** A working version already exists. Web dashboard: {DASHBOARD_URL}  ·  Android APK: "
+         f"{APK_URL}  ·  Project video: {VIDEO_URL}  ·  Source code: {GITHUB_URL}"),
     H1("References"),
     OL("G. Jocher et al., *Ultralytics YOLOv8*, 2023.",
        "ONNX Runtime documentation, *Model quantization*.",

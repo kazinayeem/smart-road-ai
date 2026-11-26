@@ -61,8 +61,9 @@ B = [
        "Ultralytics YOLOv8 documentation; ONNX Runtime Mobile documentation.",
        "Firebase Realtime Database security rules documentation.",
        f"Project repository (code, rules, tests and scripts): {GITHUB_URL}",
-       f"Live dashboard and Android APK download: {LIVE_URL}",
-       f"Video overview of the full system: {VIDEO_URL}"),
+       f"Live web dashboard: {DASHBOARD_URL}",
+       f"Android APK download: {APK_URL}",
+       f"Video of the full system: {VIDEO_URL}"),
 
     # ------------------------------------------------------------------ 2
     H1("2. Overall Description"),
@@ -316,7 +317,8 @@ B = [
     P("The screenshots below were taken from the running system: the Android app on a phone in Dhaka and the web "
       "dashboard in a desktop browser."),
     H3("See it running"),
-    UL(f"**Full video overview:** {VIDEO_URL}", f"**Live dashboard and Android APK download:** {LIVE_URL}",
+    UL(f"**Project video:** {VIDEO_URL}", f"**Web dashboard (live):** {DASHBOARD_URL}",
+       f"**Android APK download:** {APK_URL}",
        f"**Source code:** {GITHUB_URL}"),
     IMG(A("app_panel1"), 15.5, "Figure 9. Android: home screen, live detection with warning, and split mode"),
     IMG(A("app_panel2"), 15.5, "Figure 10. Android: hazard map, route planning with pothole count, and the rider's reports"),
@@ -345,8 +347,8 @@ B = [
       "connectivity, repeated sightings are merged, and the city can follow each pothole from first detection to a "
       "verified repair with a full history. The main gap is evaluation on local data. The software side is ready "
       "for that work: the pipeline, the database rules and the dashboard are implemented and tested."),
-    P(f"The live dashboard and the Android APK can be reached at {LIVE_URL}, the full video walkthrough is at "
-      f"{VIDEO_URL}, and all source code is at {GITHUB_URL}."),
+    P(f"The live web dashboard is at {DASHBOARD_URL}, the Android APK can be downloaded from {APK_URL}, the full "
+      f"video walkthrough is at {VIDEO_URL}, and all source code is at {GITHUB_URL}."),
     H1("References"),
     OL("G. Jocher, A. Chaurasia and J. Qiu, *Ultralytics YOLOv8*, 2023. https://github.com/ultralytics/ultralytics",
        "ONNX Runtime, *Quantize ONNX models*, Microsoft. https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html",

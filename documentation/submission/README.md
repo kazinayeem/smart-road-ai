@@ -18,9 +18,10 @@ Submitted to **Dipta Dipayan Kar**. Deadline: 9 December 2026, 11:59 PM. Present
 
 ## Links
 - Source code: https://github.com/kazinayeem/smart-road-ai
-- Live dashboard and Android APK: https://shorturl.at/Ok9CS
+- Android APK: https://shorturl.at/2Ssjl
+- Web dashboard: https://shorturl.at/tqoFD
+- Project video: https://shorturl.at/wMhFc
 - Demo video (YouTube): https://youtu.be/4Cp7OcaJe8g
-- Full overview (Google Drive): https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link
 
 ## Rebuilding
 All documents are generated from `build/` (Python 3, `python-docx`, `python-pptx`, `matplotlib`, Google Chrome for PDF).

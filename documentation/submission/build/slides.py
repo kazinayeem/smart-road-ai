@@ -19,7 +19,7 @@ from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.oxml.ns import qn
 from pptx.util import Inches, Pt
 
-from render import ASSETS, COURSE, LINKS, LOGO, OUT, TEAM
+from render import APK_URL, ASSETS, COURSE, DASHBOARD_URL, GITHUB_URL, LOGO, OUT, TEAM, VIDEO_URL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REF = os.path.join(HERE, "reference_presentation.pptx")
@@ -30,7 +30,6 @@ FONT = "Arial"
 NAVY, CARD_DK = "0B1B33", "16294A"
 CREAM, CARD, LINE = "F3F0EA", "FBFAF6", "DDD6C8"
 INK, BODY, ORANGE, ORANGE_LT, MUTED = "14213D", "4A5568", "C2410C", "FB923C", "CBD5E1"
-YOUTUBE = "https://youtu.be/4Cp7OcaJe8g?si=2Ogdcp3R_DOtYyAc"
 
 
 def rgb(h):
@@ -227,26 +226,25 @@ def build():
     L = prs.slides.add_slide(layout)
     set_bg(L, NAVY)
     text(L, 0.89, 0.89, 11.9, 0.25, "TRY IT YOURSELF", 12, ORANGE_LT, bold=True, spacing=190)
-    text(L, 0.89, 1.2, 11.9, 0.7, "Scan to download, watch or read the code", 36, "FFFFFF", bold=True)
-    items = [("Dashboard + Android APK", LINKS[1][1], "shorturl.at/Ok9CS", "apk"),
-             ("Demo video (YouTube)", YOUTUBE, "youtu.be/4Cp7OcaJe8g", "youtube"),
-             ("Source code", LINKS[0][1], "github.com/kazinayeem/smart-road-ai", "github")]
+    text(L, 0.89, 1.2, 11.9, 0.7, "Scan to install, open, watch or read the code", 36, "FFFFFF", bold=True)
+    items = [("Android APK", APK_URL, "shorturl.at/2Ssjl", "apk"),
+             ("Web dashboard", DASHBOARD_URL, "shorturl.at/tqoFD", "dashboard"),
+             ("Project video", VIDEO_URL, "shorturl.at/wMhFc", "video"),
+             ("Source code", GITHUB_URL, "github.com/kazinayeem/smart-road-ai", "github")]
     for i, (title, url, short, key) in enumerate(items):
-        x = 0.89 + i * 3.92
-        card(L, x, 2.3, 3.72, 4.0, CARD_DK)
-        card(L, x + 0.81, 2.6, 2.1, 2.1, "FFFFFF").adjustments[0] = 0.06
-        L.shapes.add_picture(qr_png(url, key), Inches(x + 0.91), Inches(2.7), Inches(1.9), Inches(1.9))
-        text(L, x + 0.2, 4.95, 3.32, 0.35, title, 17, "FFFFFF", bold=True, align=PP_ALIGN.CENTER)
-        text(L, x + 0.2, 5.4, 3.32, 0.5, short, 12, ORANGE_LT, align=PP_ALIGN.CENTER, link=url)
-    text(L, 0.89, 6.5, 11.9, 0.3, "Full walkthrough also on Google Drive: ", 11.5, MUTED)
-    text(L, 3.85, 6.5, 8.9, 0.3, LINKS[2][1], 11.5, ORANGE_LT, link=LINKS[2][1])
-    text(L, 0.89, 6.85, 11.9, 0.3, f"Built by {lead[0]}", 11.5, MUTED)
+        x = 0.89 + i * 2.93
+        card(L, x, 2.3, 2.76, 3.95, CARD_DK)
+        card(L, x + 0.33, 2.55, 2.1, 2.1, "FFFFFF").adjustments[0] = 0.06
+        L.shapes.add_picture(qr_png(url, key), Inches(x + 0.43), Inches(2.65), Inches(1.9), Inches(1.9))
+        text(L, x + 0.15, 4.9, 2.46, 0.35, title, 17, "FFFFFF", bold=True, align=PP_ALIGN.CENTER)
+        text(L, x + 0.15, 5.35, 2.46, 0.6, short, 11.5, ORANGE_LT, align=PP_ALIGN.CENTER, link=url)
+    text(L, 0.89, 6.6, 11.9, 0.3, f"Built by {lead[0]}", 11.5, MUTED)
     move_slide(prs, len(prs.slides) - 1, len(prs.slides) - 2)
 
     # 4. Closing slide: credit line
     last = prs.slides[len(prs.slides) - 1]
     text(last, 0.89, 5.75, 11.9, 0.35, f"Built by {lead[0]} ({lead[1]})  ·  github.com/kazinayeem/smart-road-ai",
-         14, "3A2413", bold=True, link=LINKS[0][1])
+         14, "3A2413", bold=True, link=GITHUB_URL)
 
     fit_text(prs)
     prs.save(PPTX)
