@@ -33,6 +33,8 @@ B = [
         ["14", "Project timeline", "Gantt chart"],
         ["15", "Git workflow", "Workflow"],
     ], [0.5, 3, 2]),
+    NOTE(f"The workflows below can be seen running in the project video: {VIDEO_URL}. The live dashboard and Android "
+         f"APK are at {LIVE_URL}; the code for every diagram is at {GITHUB_URL}."),
     PB(),
     H1("1. Architecture"),
     *fig("1.1 System architecture", "architecture", 16, "Figure 1. Three-tier architecture",

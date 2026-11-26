@@ -17,7 +17,7 @@ AND = "android-app/app/src/main/java/org/smartpothole/app/"
 
 B = [
     H1("1. Repository Layout"),
-    P("The full source is in the team repository on GitHub. The project has four parts:"),
+    P(f"The full source is in the team repository on GitHub: {GITHUB_URL}. The project has four parts:"),
     CODE("""smart-road-ai/
 ├── ai-model/            YOLOv8s model files and Python export / benchmark scripts
 │   ├── original/        best.pt (PyTorch)
@@ -115,6 +115,8 @@ B = [
          "for 15 minutes after five failures.", S.FUNC),
 
     H1("6. How to Build and Run"),
+    P(f"**Quickest way to try it:** open the live dashboard or download the ready-built Android APK from {LIVE_URL}. "
+      f"A full video walkthrough is at {VIDEO_URL}. To build from source, clone {GITHUB_URL} and run:"),
     CODE("""# Security rules: run the 17 tests on the local emulator, then deploy
 cd firebase/tests && npm install && npm test
 cd .. && firebase deploy --only database

@@ -7,31 +7,32 @@ cover = {
     "fields": cover_fields(),
 }
 
-DATE = "____ / ____ / 2026"
+DATE = "22/11/2026"
 
 
 def session(n, title, agenda, points, options, decision, actions):
-    out = ([PB()] if n > 1 else []) + [H1(f"Discussion {n}: {title}"),
-           TABLE(["Date", "Attendees", "Duration"], [[DATE, "All members", "about 1 hour"]], [1.4, 2, 1]),
+    out = ([PB()] if n > 1 else []) + [H1(f"Topic {n}: {title}"),
+           TABLE(["Date", "Attendees", "Led by"], [[DATE, "Mohammad Ali Nayeem, Mubashir Alam, Nayem Miah", "Mohammad Ali Nayeem"]], [1, 3, 1.6]),
            H3("Agenda"), UL(*agenda), H3("Discussion")]
     out += [P(p) for p in points]
     if options:
         out += [H3("Options compared"), TABLE(["Option", "For", "Against"], options, [1.3, 2, 2])]
-    out += [H3("Decision"), NOTE(decision), H3("Action items"), TABLE(["Task", "Owner", "Due"], actions, [3.5, 1.2, 1])]
+    out += [H3("Decision"), NOTE(decision), H3("Work carried out"), TABLE(["Task", "Done by", "When"], actions, [3.5, 1.6, 0.8])]
     return out
 
 
 B = [
     H1("Purpose of this Document"),
-    P("This document records the main discussions our group had while building SmartPothole. For each meeting we "
-      "note the agenda, the points raised, the options we compared, the decision and who took which task. It shows "
-      "how the design took shape and why we made the choices we did."),
+    P("This document records the group discussion held on **22/11/2026**. In the meeting, the team lead, Mohammad Ali "
+      "Nayeem, walked the group through the eight key decisions he made while building SmartPothole. For each topic it "
+      "notes the points raised, the options compared, the decision, and the work that followed. It shows how the "
+      "design took shape and why each choice was made."),
     H2("Group members"),
     TABLE(["Role", "Name", "ID", "Responsibility"], [[("Team Lead" if i == 0 else "Member"), n, i_d, r] for i, (n, i_d, r) in enumerate(TEAM)],
           [1, 1.8, 1.2, 3]),
-    P("The team lead designed and built the whole system: the AI model work, the Android app, the web dashboard and "
-      "the Firebase backend. The other members took part in the group meetings recorded below, gave feedback on the "
-      "ideas and helped with discussion of design choices."),
+    NOTE("**Who did the work.** Mohammad Ali Nayeem designed and built the whole system alone: the AI/ML model work, "
+         "the Android app, the web frontend, the Firebase backend, testing, deployment, and all documents and slides. "
+         "Mubashir Alam and Nayem Miah attended the group discussion only and did no development or documentation work."),
     PB(),
 
     *session(1, "Choosing the problem",
@@ -45,8 +46,8 @@ B = [
               ["Waste reporter", "Easy to build", "Mostly forms; little technical depth"],
               ["Pothole detector", "Real local problem; AI + mobile + web", "Model accuracy is a risk"]],
              "Build SmartPothole: AI detection on the phone plus a repair-management workflow for the City Corporation.",
-             [["Write the first problem statement and objectives", "Nayeem (Lead)", "Week 1"],
-              ["Search for a public pothole dataset or pretrained model", "Nayeem (Lead)", "Week 1"]]),
+             [["Write the first problem statement and objectives", "Mohammad Ali Nayeem", "Week 1"],
+              ["Search for a public pothole dataset or pretrained model", "Mohammad Ali Nayeem", "Week 1"]]),
 
     *session(2, "Where should the AI run?",
              ["Phone vs. server inference", "Privacy and data cost"],
@@ -58,8 +59,8 @@ B = [
              [["Server inference", "Easy updates, any model size", "Upload cost, privacy problems, needs internet"],
               ["On-device (ONNX INT8)", "Offline, private, free per report", "Smaller model, slower on old phones"]],
              "Run YOLOv8s INT8 on the phone with ONNX Runtime. Never upload images; send metadata only.",
-             [["Export to ONNX and quantise; benchmark the formats", "Nayeem (Lead)", "Week 4"],
-              ["Write the privacy rule into the SRS", "Nayeem (Lead)", "Week 3"]]),
+             [["Export to ONNX and quantise; benchmark the formats", "Mohammad Ali Nayeem", "Week 4"],
+              ["Write the privacy rule into the SRS", "Mohammad Ali Nayeem", "Week 3"]]),
 
     *session(3, "Backend: custom server or Firebase?",
              ["Choose the backend", "How to enforce roles"],
@@ -72,8 +73,8 @@ B = [
               ["Firebase RTDB", "Live sync, auth, free tier", "All security must be in rules"]],
              "Use Firebase (Auth, Realtime Database, one Cloud Function). Treat database.rules.json as the real "
              "security layer and cover it with automated tests.",
-             [["Draft the database structure", "Nayeem (Lead)", "Week 5"],
-              ["Write the rules and the first rule tests", "Nayeem (Lead)", "Week 8"]]),
+             [["Draft the database structure", "Mohammad Ali Nayeem", "Week 5"],
+              ["Write the rules and the first rule tests", "Mohammad Ali Nayeem", "Week 8"]]),
 
     *session(4, "Too many false and repeated reports",
              ["Review the first road test", "Reduce noise"],
@@ -86,8 +87,8 @@ B = [
              "Add a 2-of-3 frame confirmation, a 0.55 report threshold, a 3.5 s cooldown, a 10 m / 60 s same-spot gate, "
              "and refuse to report without a fresh GPS fix (≤ 30 s, ≤ 50 m). Show \"not reported\" to the rider "
              "instead of guessing a location.",
-             [["Implement the gates in DetectionController", "Nayeem (Lead)", "Week 7"],
-              ["Remove the hard-coded fallback location from web and app", "Nayeem (Lead)", "Week 7"]]),
+             [["Implement the gates in DetectionController", "Mohammad Ali Nayeem", "Week 7"],
+              ["Remove the hard-coded fallback location from web and app", "Mohammad Ali Nayeem", "Week 7"]]),
 
     *session(5, "Working without internet",
              ["What happens on roads with no signal", "Avoid losing or double-counting reports"],
@@ -98,8 +99,8 @@ B = [
              None,
              "Room database as an outbox, WorkManager for background upload with exponential backoff, and the "
              "client UUID as an idempotency key.",
-             [["ReportSubmitter, SyncWorker, Room migration", "Nayeem (Lead)", "Week 9"],
-              ["Airplane-mode test case", "Nayeem (Lead)", "Week 9"]]),
+             [["ReportSubmitter, SyncWorker, Room migration", "Mohammad Ali Nayeem", "Week 9"],
+              ["Airplane-mode test case", "Mohammad Ali Nayeem", "Week 9"]]),
 
     *session(6, "Merging reports from many riders",
              ["One pothole, many reports", "Choosing the match distance"],
@@ -113,8 +114,8 @@ B = [
               ["Accuracy clamped 10–25 m", "Adapts but bounded", "Slightly more code"]],
              "Match radius = clamp(GPS accuracy, 10 m, 25 m). Keep reports/ as the single record and detections/ as "
              "append-only evidence. Ignore resolved, rejected and duplicate reports when matching.",
-             [["SmartPotholeDeduplicator with latitude-band query", "Nayeem (Lead)", "Week 10"],
-              ["Show \"Seen N times\" in the city table", "Nayeem (Lead)", "Week 10"]]),
+             [["SmartPotholeDeduplicator with latitude-band query", "Mohammad Ali Nayeem", "Week 10"],
+              ["Show \"Seen N times\" in the city table", "Mohammad Ali Nayeem", "Week 10"]]),
 
     *session(7, "Roles and the repair lifecycle",
              ["Who can change what", "When is a repair finished"],
@@ -126,8 +127,8 @@ B = [
              None,
              "Nine-stage lifecycle with decline and rework branches. Only CITY_CORPORATION can resolve. Every status "
              "change is written to an append-only activity log. Roles are read from the database only.",
-             [["Rewrite rules; add the 17 rule tests", "Nayeem (Lead)", "Week 11"],
-              ["City and contractor dashboards", "Nayeem (Lead)", "Week 11"]]),
+             [["Rewrite rules; add the 17 rule tests", "Mohammad Ali Nayeem", "Week 11"],
+              ["City and contractor dashboards", "Mohammad Ali Nayeem", "Week 11"]]),
 
     *session(8, "Extra features and final testing",
              ["Which extra features are worth the time", "Plan testing and documentation"],
@@ -139,9 +140,9 @@ B = [
              None,
              "Keep live companion (no video), route planning and split mode. Freeze features two weeks before "
              "submission; spend the rest on testing, the SRS, diagrams and slides.",
-             [["Road tests and screenshots", "Nayeem (Lead)", "Week 13"],
-              ["SRS, proposal, code and diagram documents", "Nayeem (Lead)", "Week 14"],
-              ["Presentation slides and rehearsal", "All members", "9 Dec"]]),
+             [["Road tests and screenshots", "Mohammad Ali Nayeem", "Week 13"],
+              ["SRS, proposal, code and diagram documents", "Mohammad Ali Nayeem", "Week 14"],
+              ["Presentation slides and rehearsal", "Mohammad Ali Nayeem", "Week 14"]]),
 
     H1("Summary of Decisions"),
     TABLE(["#", "Topic", "Decision"], [
@@ -160,6 +161,8 @@ B = [
        "With Firebase, the security rules are the backend. Testing them early found two serious bugs.",
        "Designing for no network from the start was much easier than adding it later.",
        "Being clear about what is not finished (model evaluation on local roads) is better than overstating results."),
+    NOTE(f"**Result of these discussions.** Source code: {GITHUB_URL}  ·  Live dashboard and Android APK: {LIVE_URL}  "
+         f"·  Video overview: {VIDEO_URL}"),
     SIGN("Mohammad Ali Nayeem", "Mubashir Alam", "Nayem Miah", "Dipta Dipayan Kar"),
 ]
 

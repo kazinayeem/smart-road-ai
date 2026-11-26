@@ -12,9 +12,14 @@ Submitted to **Dipta Dipayan Kar**. Deadline: 9 December 2026, 11:59 PM. Present
 | 6 | Presentation slides (project pushed to Git, fork included) | `06_Presentation_Slides.pptx` | `06_Presentation_Slides.pdf` |
 
 ## Team
-- Mohammad Ali Nayeem (232-35-022), Team Lead: ML/AI, Android, frontend, backend
-- Mubashir Alam (232-35-682), Member
-- Nayem Miah (232-35-628), Member
+- Mohammad Ali Nayeem (232-35-022), Team Lead: did all of the work (AI/ML, Android, web frontend, Firebase backend, testing, deployment, documents and slides)
+- Mubashir Alam (232-35-682), Member: attended the group discussion only
+- Nayem Miah (232-35-628), Member: attended the group discussion only
+
+## Links
+- Source code: https://github.com/kazinayeem/smart-road-ai
+- Live dashboard and Android APK: https://shorturl.at/Ok9CS
+- Video overview: https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link
 
 ## Rebuilding
 All documents are generated from `build/` (Python 3, `python-docx`, `python-pptx`, `matplotlib`, Google Chrome for PDF).

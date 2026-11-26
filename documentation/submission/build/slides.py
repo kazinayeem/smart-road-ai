@@ -84,6 +84,12 @@ SLIDES = [
         "Drivers get warnings straight away",
         "The city gets one de-duplicated record per pothole and a full repair history",
     ], None, "text"),
+    ("Team and Contribution", [
+        "**Mohammad Ali Nayeem (232-35-022), Team Lead:** did all of the work: idea, design, AI/ML model, "
+        "Android app, web frontend, Firebase backend, testing, deployment, documents and slides",
+        "**Mubashir Alam (232-35-682):** attended the group discussion only",
+        "**Nayem Miah (232-35-628):** attended the group discussion only",
+    ], None, "text"),
     ("Project Links", [f"**{k}:** {v}" for k, v in LINKS], None, "text"),
 ]
 
@@ -143,6 +149,10 @@ def build_pptx(path):
     for i, (k, v) in enumerate(COURSE):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         _runs(p, f"{k}: {v}", 14, RGBColor(0xCB, 0xD5, 0xE1))
+    tf = s.shapes.add_textbox(Inches(0.7), Inches(6.55), Inches(12), Inches(0.8)).text_frame
+    for i, (k, v) in enumerate(LINKS[:2]):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        _runs(p, f"{k}: {v}", 11, RGBColor(0xCB, 0xD5, 0xE1))
 
     for n, (title, bullets, img, layout) in enumerate(SLIDES, start=2):
         s = prs.slides.add_slide(blank)
@@ -219,6 +229,7 @@ def build_pdf(path):
     team = "".join(f"<div style='font-size:15pt;margin-bottom:6pt;{'font-weight:bold' if i == 0 else ''}'>"
                    f"{'Team Lead: ' if i == 0 else ''}{html.escape(n)} ({i_d})</div>" for i, (n, i_d, _) in enumerate(TEAM))
     course = "".join(f"<div style='font-size:14pt;margin-bottom:6pt;color:#CBD5E1'>{k}: {html.escape(v)}</div>" for k, v in COURSE)
+    links = "<br>".join(f"{html.escape(k)}: <a href='{v}' style='color:#FB923C'>{v}</a>" for k, v in LINKS[:2])
     h.append(f"""<section class='s dark'>
 <img src='{_data_uri(LOGO)}' style='position:absolute;left:.7in;top:.6in;height:1.3in'>
 <div style='position:absolute;left:2.25in;top:.85in'><div style='font-size:22pt;font-weight:bold'>Daffodil International University</div>
@@ -226,7 +237,8 @@ def build_pdf(path):
 <div style='position:absolute;left:.7in;top:2.45in;right:.7in'><div style='font-size:46pt;font-weight:bold;color:#FB923C'>SmartPothole</div>
 <div style='font-size:26pt;font-weight:bold'>On-Device Pothole Detection and Road-Maintenance Platform</div></div>
 <div style='position:absolute;left:.7in;top:4.6in;width:6.2in'>{team}</div>
-<div style='position:absolute;left:7.2in;top:4.6in;width:5.6in'>{course}</div></section>""")
+<div style='position:absolute;left:7.2in;top:4.6in;width:5.6in'>{course}</div>
+<div style='position:absolute;left:.7in;top:6.6in;font-size:11pt;color:#CBD5E1'>{links}</div></section>""")
     import re
     for n, (title, bullets, img, layout) in enumerate(SLIDES, start=2):
         cls = {"text": "text", "img-right": "right", "img-below": "below", "img-full": "full"}[layout]

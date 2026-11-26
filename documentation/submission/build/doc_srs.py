@@ -60,7 +60,9 @@ B = [
     UL("IEEE Std 830-1998, *Recommended Practice for Software Requirements Specifications*.",
        "Ultralytics YOLOv8 documentation; ONNX Runtime Mobile documentation.",
        "Firebase Realtime Database security rules documentation.",
-       "Project repository: `github.com/kazinayeem/smart-road-ai` (code, rules, tests and scripts)."),
+       f"Project repository (code, rules, tests and scripts): {GITHUB_URL}",
+       f"Live dashboard and Android APK download: {LIVE_URL}",
+       f"Video overview of the full system: {VIDEO_URL}"),
 
     # ------------------------------------------------------------------ 2
     H1("2. Overall Description"),
@@ -274,7 +276,7 @@ B = [
        "**Unit tests:** JVM tests for the Android logic (severity, match radius, gates) in `LogicTest.kt`, 4 of 4 passing.",
        "**Function tests:** username login checked in the Functions emulator (correct login, wrong password, lockout).",
        "**End-to-end web test:** a full journey on emulators with the real rules, from citizen report to contractor acceptance.",
-       "**Device test:** the Android app run on a real phone on Dhaka roads; screenshots in Section 9.",
+       f"**Device test:** the Android app run on a real phone on Dhaka roads; screenshots in Section 9 and a recorded walkthrough at {VIDEO_URL}",
        "**Model check:** export and benchmark script comparing PyTorch, ONNX FP32 and ONNX INT8."),
     H2("8.2 Test cases"),
     TABLE(["TC", "Test", "Expected result", "Result"], [
@@ -313,6 +315,9 @@ B = [
     H1("9. Results and Screenshots"),
     P("The screenshots below were taken from the running system: the Android app on a phone in Dhaka and the web "
       "dashboard in a desktop browser."),
+    H3("See it running"),
+    UL(f"**Full video overview:** {VIDEO_URL}", f"**Live dashboard and Android APK download:** {LIVE_URL}",
+       f"**Source code:** {GITHUB_URL}"),
     IMG(A("app_panel1"), 15.5, "Figure 9. Android: home screen, live detection with warning, and split mode"),
     IMG(A("app_panel2"), 15.5, "Figure 10. Android: hazard map, route planning with pothole count, and the rider's reports"),
     IMG(A("app_panel3"), 15.5, "Figure 11. Android: profile and alert settings, nearby warning on the map, upload status"),
@@ -340,13 +345,16 @@ B = [
       "connectivity, repeated sightings are merged, and the city can follow each pothole from first detection to a "
       "verified repair with a full history. The main gap is evaluation on local data. The software side is ready "
       "for that work: the pipeline, the database rules and the dashboard are implemented and tested."),
+    P(f"The live dashboard and the Android APK can be reached at {LIVE_URL}, the full video walkthrough is at "
+      f"{VIDEO_URL}, and all source code is at {GITHUB_URL}."),
     H1("References"),
     OL("G. Jocher, A. Chaurasia and J. Qiu, *Ultralytics YOLOv8*, 2023. https://github.com/ultralytics/ultralytics",
        "ONNX Runtime, *Quantize ONNX models*, Microsoft. https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html",
        "Google, *Firebase Realtime Database Security Rules*. https://firebase.google.com/docs/database/security",
        "Android Developers, *CameraX ImageAnalysis* and *WorkManager* guides. https://developer.android.com",
        "IEEE Std 830-1998, *IEEE Recommended Practice for Software Requirements Specifications*.",
-       "OpenStreetMap contributors, *OpenStreetMap*. https://www.openstreetmap.org"),
+       "OpenStreetMap contributors, *OpenStreetMap*. https://www.openstreetmap.org",
+       f"SmartPothole source code repository. {GITHUB_URL}"),
 ]
 
 if __name__ == "__main__":

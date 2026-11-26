@@ -108,7 +108,7 @@ def _cell_margins(table, top=60, bottom=60, left=90, right=90):
     tblPr.append(mar)
 
 
-_URL = re.compile(r"(https?://[^\s)]+)")
+_URL = re.compile(r"(https?://[^\s)]*[^\s).,;:])")
 
 
 def _hyperlink(par, url, size=None):
@@ -228,7 +228,17 @@ def _docx_cover(doc, cover):
         _add_runs(a.paragraphs[0], k, size=10.5, color=NAVY, bold=True)
         _add_runs(b.paragraphs[0], v or " ", size=10.5)
     q = doc.add_paragraph()
-    q.paragraph_format.space_before = Pt(18)
+    q.paragraph_format.space_before = Pt(14)
+    q.paragraph_format.space_after = Pt(2)
+    q.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    _add_runs(q, "Project links", size=10, color=ACCENT, bold=True)
+    for k, v in LINKS:
+        q = doc.add_paragraph()
+        q.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        q.paragraph_format.space_after = Pt(1)
+        _add_runs(q, f"{k}: {v}", size=8.5, color=GREY)
+    q = doc.add_paragraph()
+    q.paragraph_format.space_before = Pt(12)
     q.alignment = WD_ALIGN_PARAGRAPH.CENTER
     _add_runs(q, f"Submission date: {SUBMISSION_DATE}", size=10.5, color=GREY)
     doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
@@ -374,6 +384,8 @@ pre { font-family: Consolas, Menlo, monospace; font-size: 7.9pt; line-height: 1.
 .cover table { border-collapse: collapse; width: 150mm; font-size: 10.5pt; text-align: left; }
 .cover td { border: 1px solid #b9c3cf; padding: 6pt 9pt; height: 24pt; }
 .cover td.k { background: #EEF2F7; font-weight: bold; color: #0B1B33; width: 52mm; }
+.cover .links { margin-top: 14pt; font-size: 8.6pt; color: #5b6573; line-height: 1.5; max-width: 160mm; }
+.cover .links b { display: block; color: #1F5F8B; font-size: 10pt; margin-bottom: 2pt; }
 .cover .date { margin-top: auto; color: #5b6573; font-size: 10.5pt; }
 """
 
@@ -399,11 +411,13 @@ def to_html(cover, blocks, short_title):
     h = [f"<!doctype html><html><head><meta charset='utf-8'><title>{html.escape(cover['title'])}</title>",
          f"<style>{CSS.replace('%SHORT%', short_title)}</style></head><body>"]
     rows = "".join(f"<tr><td class='k'>{html.escape(k)}</td><td>{html.escape(v)}</td></tr>" for k, v in cover["fields"])
+    links = "".join(f"<div>{html.escape(k)}: <a href='{v}'>{html.escape(v)}</a></div>" for k, v in LINKS)
     h.append(f"""<section class='cover'><img class='logo' src='{_data_uri(LOGO)}'>
 <div class='uni'>Daffodil International University</div>
 <div class='dept'>Department of {html.escape(cover.get('department', 'Software Engineering'))}</div>
 <div class='kind'>{html.escape(cover['kind'].upper())}</div><div class='title'>{html.escape(cover['title'])}</div>
 <div class='sub'>{html.escape(cover.get('subtitle', ''))}</div><table>{rows}</table>
+<div class='links'><b>Project links</b>{links}</div>
 <div class='date'>Submission date: {SUBMISSION_DATE}</div></section>""")
     for b in blocks:
         k = b[0]
@@ -463,10 +477,14 @@ def build(basename, cover, blocks, short_title):
     print("built", basename)
 
 
+GITHUB_URL = "https://github.com/kazinayeem/smart-road-ai"
+LIVE_URL = "https://shorturl.at/Ok9CS"
+VIDEO_URL = "https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link"
+
 LINKS = [
-    ("GitHub repository", "https://github.com/kazinayeem/smart-road-ai"),
-    ("Live dashboard and Android app download", "https://shorturl.at/Ok9CS"),
-    ("Full project video overview", "https://drive.google.com/file/d/1gwy5tVSgR5i_M8F14SBjZcohCMulNZJ7/view?usp=drive_link"),
+    ("GitHub repository", GITHUB_URL),
+    ("Live dashboard and Android app (APK) download", LIVE_URL),
+    ("Full project video overview (Google Drive)", VIDEO_URL),
 ]
 
 
@@ -475,13 +493,19 @@ def link_blocks():
             TABLE(["Resource", "Link"], [[k, v] for k, v in LINKS], [1.4, 3.6]),
             P("The repository holds the full source code (Android app, web dashboard, Firebase rules and functions, "
               "AI model scripts) and these documents. The video shows the complete system working end to end."),
+            H2("Team and Contribution"),
+            TABLE(["Name", "ID", "Contribution"], [[n, i_d, r] for n, i_d, r in TEAM], [1.3, 0.9, 4]),
+            NOTE("**Statement of work.** The entire project, including the AI/ML model work, the Android app, the web "
+                 "dashboard (frontend), the Firebase backend, testing, deployment and all of these documents, was "
+                 "designed and built by **Mohammad Ali Nayeem** (232-35-022). The other two members took part in the "
+                 "group discussion only."),
             PB()]
 
 
 TEAM = [
-    ("Mohammad Ali Nayeem", "232-35-022", "Team Lead (ML/AI, Android, frontend, backend)"),
-    ("Mubashir Alam", "232-35-682", "Member (group meetings and discussion)"),
-    ("Nayem Miah", "232-35-628", "Member (group meetings and discussion)"),
+    ("Mohammad Ali Nayeem", "232-35-022", "Team Lead. Did all of the work: idea, requirements, design, AI/ML model, Android app, web frontend, Firebase backend, testing, deployment, documentation and slides"),
+    ("Mubashir Alam", "232-35-682", "Group member. Attended the group discussion only; no development or documentation work"),
+    ("Nayem Miah", "232-35-628", "Group member. Attended the group discussion only; no development or documentation work"),
 ]
 COURSE = [("Course Code", "SE 331"), ("Course Title", "Software Engineering Design Capstone Project"),
           ("Section", "42_H1"), ("Submitted To", "Dipta Dipayan Kar")]
