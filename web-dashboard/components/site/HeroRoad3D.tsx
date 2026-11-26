@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
  * Decorative three.js scene: a night road scrolling toward the viewer. A cyan scan beam sweeps the
  * road; potholes it passes over light up and get an orange map pin, like the app's detector.
  * - three.js is loaded lazily so it never blocks first paint.
- * - Renders a single still frame under prefers-reduced-motion.
+ * - Under prefers-reduced-motion it still runs, but slower and without pointer parallax.
  * - Pauses when off screen or when the tab is hidden.
  */
 export function HeroRoad3D({ className = '' }: { className?: string }) {
@@ -165,8 +165,8 @@ export function HeroRoad3D({ className = '' }: { className?: string }) {
       if (!reduce) window.addEventListener('pointermove', onPointer, { passive: true });
 
       /* --- loop --- */
-      const SPEED = 9; // world units per second
-      const BEAM_NEAR = 2, BEAM_FAR = -34, BEAM_PERIOD = 2.6;
+      const SPEED = reduce ? 4 : 9; // world units per second (calmer under reduced motion)
+      const BEAM_NEAR = 2, BEAM_FAR = -34, BEAM_PERIOD = reduce ? 4 : 2.6;
       const clock = new THREE.Clock();
       let t = 0, raf = 0, running = false;
 
@@ -216,14 +216,8 @@ export function HeroRoad3D({ className = '' }: { className?: string }) {
         renderer.render(scene, camera);
         raf = requestAnimationFrame(frame);
       };
-      const start = () => { if (running || reduce) return; running = true; clock.getDelta(); raf = requestAnimationFrame(frame); };
+      const start = () => { if (running) return; running = true; clock.getDelta(); raf = requestAnimationFrame(frame); };
       const stop = () => { running = false; cancelAnimationFrame(raf); };
-
-      if (reduce) {
-        // One meaningful still frame: beam mid-road, two potholes already flagged.
-        step(1.3); holes.slice(0, 2).forEach((h) => { h.detected = true; h.pop = 1; fixPinScale(h, 1.1); });
-        renderer.render(scene, camera);
-      }
 
       let onScreen = true;
       const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (onScreen && !document.hidden) start(); else stop(); });

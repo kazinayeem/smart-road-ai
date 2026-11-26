@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 
 export { LINKS } from './links';
 
-/** Fades/slides in every [data-reveal] element as it scrolls into view. No-op under reduced motion. */
+/** Fades/slides in every [data-reveal] element as it scrolls into view. Fade only (no slide) under reduced motion. */
 export function useReveal() {
   useEffect(() => {
     const root = document.documentElement;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    if (!('IntersectionObserver' in window)) return;
     root.classList.add('sp-reveal-ready');
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
