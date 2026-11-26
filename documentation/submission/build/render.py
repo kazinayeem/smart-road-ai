@@ -480,7 +480,7 @@ def build(basename, cover, blocks, short_title):
 GITHUB_URL = "https://github.com/kazinayeem/smart-road-ai"
 APK_URL = "https://shorturl.at/2Ssjl"
 VIDEO_URL = "https://shorturl.at/wMhFc"
-DASHBOARD_URL = "https://shorturl.at/tqoFD"
+DASHBOARD_URL = "https://smartpothole-ai.vercel.app"
 
 LINKS = [
     ("GitHub repository", GITHUB_URL),

@@ -19,7 +19,7 @@ Submitted to **Dipta Dipayan Kar**. Deadline: 9 December 2026, 11:59 PM. Present
 ## Links
 - Source code: https://github.com/kazinayeem/smart-road-ai
 - Android APK: https://shorturl.at/2Ssjl
-- Web dashboard: https://shorturl.at/tqoFD
+- Web dashboard: https://smartpothole-ai.vercel.app
 - Project video: https://shorturl.at/wMhFc
 - Demo video (YouTube): https://youtu.be/4Cp7OcaJe8g
 

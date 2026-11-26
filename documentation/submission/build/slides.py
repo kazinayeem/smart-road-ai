@@ -228,7 +228,7 @@ def build():
     text(L, 0.89, 0.89, 11.9, 0.25, "TRY IT YOURSELF", 12, ORANGE_LT, bold=True, spacing=190)
     text(L, 0.89, 1.2, 11.9, 0.7, "Scan to install, open, watch or read the code", 36, "FFFFFF", bold=True)
     items = [("Android APK", APK_URL, "shorturl.at/2Ssjl", "apk"),
-             ("Web dashboard", DASHBOARD_URL, "shorturl.at/tqoFD", "dashboard"),
+             ("Web dashboard", DASHBOARD_URL, "smartpothole-ai.vercel.app", "dashboard"),
              ("Project video", VIDEO_URL, "shorturl.at/wMhFc", "video"),
              ("Source code", GITHUB_URL, "github.com/kazinayeem/smart-road-ai", "github")]
     for i, (title, url, short, key) in enumerate(items):

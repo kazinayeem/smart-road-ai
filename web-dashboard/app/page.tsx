@@ -416,9 +416,9 @@ export default function Home() {
                 </ul>
               </div>
               <div className="relative" data-reveal>
-                <BrowserFrame src="/screens/web-city-map.webp" alt="City Corporation dashboard: live map of pothole reports around the user's position with status filters" url="cryptro.web.app/city" width={1600} height={696} />
+                <BrowserFrame src="/screens/web-city-map.webp" alt="City Corporation dashboard: live map of pothole reports around the user's position with status filters" url="smartpothole-ai.vercel.app/city" width={1600} height={696} />
                 <div className="relative -mt-16 ml-auto w-[85%] sm:-mt-24">
-                  <BrowserFrame src="/screens/web-triage.webp" alt="Pothole reports and lifecycle triage table with AI confidence, severity, status and contractor columns" url="cryptro.web.app/city#triage" width={1600} height={801} />
+                  <BrowserFrame src="/screens/web-triage.webp" alt="Pothole reports and lifecycle triage table with AI confidence, severity, status and contractor columns" url="smartpothole-ai.vercel.app/city#triage" width={1600} height={801} />
                 </div>
               </div>
             </div>

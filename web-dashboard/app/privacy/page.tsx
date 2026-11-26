@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           body: (
             <>
               <p>SmartPothole AI (&quot;the service&quot;, &quot;we&quot;) is a <strong>pilot project in beta</strong>, designed, developed and led by Mohammad Ali Nayeem as a capstone project at Daffodil International University. It is <strong>not</strong> an official government service, although it is built so that a city corporation could use it.</p>
-              <p>This policy covers the website at <code>cryptro.web.app</code>, the web dashboard and the SmartPothole Android app.</p>
+              <p>This policy covers the website at <code>smartpothole-ai.vercel.app</code> (also served at <code>cryptro.web.app</code>), the web dashboard and the SmartPothole Android app.</p>
             </>
           ),
         },
@@ -99,7 +99,8 @@ export default function PrivacyPage() {
             <>
               <p>The service uses these providers. Each handles data under its own privacy policy:</p>
               <ul>
-                <li><strong>Google Firebase</strong> (Authentication, Realtime Database, Cloud Functions, Cloud Messaging, Hosting) stores accounts and reports and serves this website.</li>
+                <li><strong>Google Firebase</strong> (Authentication, Realtime Database, Cloud Functions, Cloud Messaging, Hosting) stores accounts and reports.</li>
+                <li><strong>Vercel</strong> and <strong>Firebase Hosting</strong> serve this website. Like any web host, they receive your IP address and standard request details when you visit.</li>
                 <li><strong>OpenStreetMap</strong> and <strong>OpenFreeMap</strong> provide map tiles. Your device requests tiles for the area on screen.</li>
                 <li><strong>Google Fonts</strong> and <strong>unpkg</strong> serve fonts and the map stylesheet for the website.</li>
                 <li><strong>YouTube</strong> serves the demo video, and only after you press play. We use YouTube&apos;s privacy-enhanced embed.</li>

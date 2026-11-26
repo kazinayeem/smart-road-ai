@@ -177,11 +177,11 @@ export default function HowItWorksPage() {
       <section className="bg-slate-50">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-2">
           <figure data-reveal>
-            <BrowserFrame src="/screens/web-city-map.webp" alt="City dashboard live map of reports" url="cryptro.web.app/city" width={1600} height={696} />
+            <BrowserFrame src="/screens/web-city-map.webp" alt="City dashboard live map of reports" url="smartpothole-ai.vercel.app/city" width={1600} height={696} />
             <figcaption className="mt-3 text-sm text-slate-600">The city&apos;s live map, filtered by new, in repair and done.</figcaption>
           </figure>
           <figure data-reveal>
-            <BrowserFrame src="/screens/web-triage.webp" alt="Triage table with AI confidence, severity, status and contractor" url="cryptro.web.app/city#triage" width={1600} height={801} />
+            <BrowserFrame src="/screens/web-triage.webp" alt="Triage table with AI confidence, severity, status and contractor" url="smartpothole-ai.vercel.app/city#triage" width={1600} height={801} />
             <figcaption className="mt-3 text-sm text-slate-600">The triage queue: reporter, time, confirmations, AI confidence and status for every report.</figcaption>
           </figure>
         </div>

@@ -10,7 +10,7 @@
 
 [![Watch the demo](https://img.shields.io/badge/▶_Watch_demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/4Cp7OcaJe8g?si=2Ogdcp3R_DOtYyAc)
 [![Download APK](https://img.shields.io/badge/Download-Android_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://shorturl.at/2Ssjl)
-[![Live dashboard](https://img.shields.io/badge/Open-Web_Dashboard-F97316?style=for-the-badge&logo=firebase&logoColor=white)](https://shorturl.at/tqoFD)
+[![Live dashboard](https://img.shields.io/badge/Open-Web_Dashboard-F97316?style=for-the-badge&logo=vercel&logoColor=white)](https://smartpothole-ai.vercel.app)
 [![Project video](https://img.shields.io/badge/Watch-Project_Video-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://shorturl.at/wMhFc)
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
@@ -31,7 +31,7 @@ Click the image to watch on YouTube. The full project video is at **https://shor
 | What | Link |
 |---|---|
 | 📱 **Android app (APK) download** | **https://shorturl.at/2Ssjl** |
-| 🌐 **Web dashboard (live)** | **https://shorturl.at/tqoFD** |
+| 🌐 **Web dashboard (live)** | **https://smartpothole-ai.vercel.app** |
 | 🎞️ **Full project video** | **https://shorturl.at/wMhFc** |
 | 🎬 Demo video (YouTube) | https://youtu.be/4Cp7OcaJe8g |
 | 💻 Source code | https://github.com/kazinayeem/smart-road-ai |
